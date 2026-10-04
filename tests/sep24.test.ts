@@ -1,0 +1,22 @@
+import { beforeEach,afterEach,it,expect,vi } from 'vitest';
+import { Keypair,Networks,StellarToml,TransactionBuilder,WebAuth } from '@stellar/stellar-sdk';
+import { Sep24Provider } from '@/server/offramp';
+const signing=Keypair.random(),account=Keypair.random(),home='anchor.example';
+const old={...process.env};
+beforeEach(()=>{Object.assign(process.env,{STELLAR_NETWORK:'testnet',NEXT_PUBLIC_DEMO_MODE:'false',ANCHOR_HOME_DOMAIN:home,ANCHOR_NETWORK:'testnet',ANCHOR_PROTOCOL:'SEP24',ANCHOR_ASSET_CODE:'USDC',ANCHOR_ASSET_ISSUER:'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5',ANCHOR_SUPPORTED_FIAT:'NGN,USD'});delete process.env.ANCHOR_TRANSFER_SERVER;
+ vi.spyOn(StellarToml.Resolver,'resolve').mockResolvedValue({NETWORK_PASSPHRASE:Networks.TESTNET,TRANSFER_SERVER_SEP0024:`https://${home}/sep24`,WEB_AUTH_ENDPOINT:`https://${home}/auth`,SIGNING_KEY:signing.publicKey(),ANCHOR_QUOTE_SERVER:`https://${home}/quotes`});
+});afterEach(()=>{vi.restoreAllMocks();vi.unstubAllGlobals();process.env={...old};});
+function responder(extra:Record<string,unknown>={}){vi.stubGlobal('fetch',vi.fn(async(url:string,options?:RequestInit)=>{const path=new URL(url).pathname;let data:unknown;
+ if(path==='/sep24/info')data={withdraw:{USDC:{enabled:true}}};
+ else if(path==='/quotes/info')data={assets:[{asset:'iso4217:NGN'}]};
+ else if(path==='/auth')data=options?.method==='POST'?{token:'test-anchor-session'}:{transaction:WebAuth.buildChallengeTx(signing,account.publicKey(),home,300,Networks.TESTNET,home),network_passphrase:Networks.TESTNET};
+ else if(path==='/sep24/transactions/withdraw/interactive')data={id:'anchor-123',url:`https://${home}/interactive/anchor-123`,type:'interactive_customer_info_needed'};
+ else if(path==='/sep24/transaction')data={transaction:{id:'anchor-123',status:'pending_user_transfer_start',amount_in:'150',withdraw_anchor_account:signing.publicKey(),withdraw_memo:'123',withdraw_memo_type:'id'}};
+ return Response.json(extra[path]??data);
+}));}
+it('discovers supported assets and intersects configured fiat with provider metadata',async()=>{responder();const info=await new Sep24Provider().getInfo();expect(info.available).toBe(true);expect(info.currencies).toEqual(['NGN']);expect(info.demo).toBe(false);});
+it('validates SEP-10 signature, obtains a token, creates SEP-24 session and reads transfer instructions',async()=>{responder();const p=new Sep24Provider();const challenge=await p.challenge(account.publicKey());const tx=TransactionBuilder.fromXDR(challenge.xdr,Networks.TESTNET);tx.sign(account);const token=await p.authenticate(account.publicKey(),tx.toXDR());expect(token).toBe('test-anchor-session');expect(await p.startWithdrawal({account:account.publicKey(),amount:'150',currency:'NGN',token})).toEqual({id:'anchor-123',url:`https://${home}/interactive/anchor-123`});const status=await p.getWithdrawalStatus('anchor-123',token);expect(status.status).toBe('AWAITING_USER_TRANSFER');expect(status.amountIn).toBe('150');expect(status.withdrawalMemo).toBe('123');});
+it('refuses a challenge from the other network',async()=>{responder({'/auth':{network_passphrase:Networks.PUBLIC,transaction:WebAuth.buildChallengeTx(signing,account.publicKey(),home,300,Networks.PUBLIC,home)}});await expect(new Sep24Provider().challenge(account.publicKey())).rejects.toThrow('network mismatch');});
+it('refuses an anchor challenge for another account',async()=>{responder();await expect(new Sep24Provider().challenge(Keypair.random().publicKey())).rejects.toThrow('account mismatch');});
+it('refuses unsupported currencies and unsafe hosted URLs',async()=>{responder();const p=new Sep24Provider();await expect(p.startWithdrawal({account:account.publicKey(),amount:'150',currency:'USD',token:'test'})).rejects.toThrow('not available');responder({'/sep24/transactions/withdraw/interactive':{id:'anchor-123',url:'javascript:alert(1)',type:'interactive_customer_info_needed'}});await expect(p.startWithdrawal({account:account.publicKey(),amount:'150',currency:'NGN',token:'test'})).rejects.toThrow('HTTPS');});
+it('rejects provider transaction-id mismatches and unknown statuses',async()=>{responder({'/sep24/transaction':{transaction:{id:'other',status:'completed'}}});await expect(new Sep24Provider().getWithdrawalStatus('anchor-123','test')).rejects.toThrow('mismatch');responder({'/sep24/transaction':{transaction:{id:'anchor-123',status:'invented'}}});await expect(new Sep24Provider().getWithdrawalStatus('anchor-123','test')).rejects.toThrow('unsupported');});
