@@ -52,10 +52,16 @@ export function PublicProfile({
             <button className="button full" onClick={() => setPay(true)}>
               Pay @{username} ↗
             </button>
-            <ShareProfile
-              username={username}
-              url={`${w.config?.appUrl || ""}/@${username}`}
-            />
+            {w.config?.appUrl ? (
+              <ShareProfile
+                username={username}
+                url={`${w.config.appUrl.replace(/\/$/, "")}/@${username}`}
+              />
+            ) : (
+              <p role="status" className="tiny">
+                Preparing payment link…
+              </p>
+            )}
             <details>
               <summary className="tiny">
                 View Stellar destination & verification
