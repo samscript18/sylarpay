@@ -26,15 +26,27 @@ export const wallet: WalletService = {
   async disconnect() {
     address = null;
   },
-  async getAddress() {
+  async getAddress(config) {
     const r = await freighter.getAddress();
     if (r.error || !r.address) return null;
+    if (config) {
+      const n = await freighter.getNetworkDetails();
+      if (n.error || n.networkPassphrase !== config.passphrase)
+        throw new Error(
+          `Switch Freighter to Stellar ${config.network} and reconnect.`,
+        );
+    }
     address = r.address;
     return address;
   },
   async signTransaction(xdr, config) {
+    const current = await freighter.getAddress();
+    if (current.error || !address || current.address !== address)
+      throw new Error(
+        "Wallet account changed or is unavailable. Reconnect before signing.",
+      );
     const n = await freighter.getNetworkDetails();
-    if (n.networkPassphrase !== config.passphrase)
+    if (n.error || n.networkPassphrase !== config.passphrase)
       throw new Error("Wallet network changed. Reconnect before signing.");
     const r = await freighter.signTransaction(xdr, {
       networkPassphrase: config.passphrase,
