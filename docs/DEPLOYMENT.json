@@ -1,0 +1,8 @@
+{
+  "network": "testnet",
+  "contractId": "CCMWUH5LKJNXW4SGGDAKBVSTECBYQZK4G64ENCVBOULWPQGJRIZFAMFH",
+  "deploymentHash": "f656e5a6472d539d8a640f25f64d8eb35baa2c079fb77e45e950c8dc8036b4f8",
+  "verifierPublicKey": "GBTIEWQCPAU3IVHLQ4LYU6SHEOTBQJUFOSIRV2X4U2Q7Y7UGLXNJICN5",
+  "initialization": "Atomic constructor",
+  "privateConfiguration": ".env.local (ignored; never distribute)"
+}

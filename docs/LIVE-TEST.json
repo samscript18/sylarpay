@@ -1,0 +1,16 @@
+{
+  "network": "testnet",
+  "username": "sam",
+  "sender": "GCWWUSBYNRJVCLJXUQYF6QCN5CQLTW4S6AQEJNUFXQZYI5F5RH4EBSYP",
+  "recipient": "GBZQLPVMRLGH6XIZDEQQM244M3JWWTC57U2BCKQ2K6FTKNHIQXLAPU2R",
+  "contractId": "CCMWUH5LKJNXW4SGGDAKBVSTECBYQZK4G64ENCVBOULWPQGJRIZFAMFH",
+  "txHash": "19862afc3130ae51fc976a5ada12306371c6473b69d7edf0bcecdc7fbc787dbf",
+  "amount": "150",
+  "assetCode": "USDC",
+  "issuer": "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+  "status": "CONFIRMED",
+  "verifiedProfile": true,
+  "balanceBefore": "150.0000000",
+  "balanceAfter": "300.0000000",
+  "checkedAt": "2026-10-04T07:21:18.124Z"
+}
