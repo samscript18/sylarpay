@@ -73,7 +73,11 @@ export async function verifyPayment(
       "response" in e &&
       (e.response as { status?: number })?.status === 404
     ) {
-      if (existing?.status === "CONFIRMED") return existing;
+      if (existing?.status === "CONFIRMED")
+        throw new AppError(
+          "Previously verified transaction is unavailable on Stellar. Check the network or a Testnet reset before presenting it as confirmed.",
+          503,
+        );
       const record: PaymentRecord = {
         txHash: input.txHash,
         network: c.network,
@@ -93,8 +97,12 @@ export async function verifyPayment(
     throw e;
   }
   const envelope = TransactionBuilder.fromXDR(tx.envelope_xdr, c.passphrase);
-  if (!(envelope instanceof Transaction) || envelope.source !== sender)
+  if (!(envelope instanceof Transaction))
     throw new AppError("Fee-bump payments are not supported by this MVP.");
+  if (envelope.source !== sender)
+    throw new AppError(
+      "Transaction sender does not match the connected account.",
+    );
   const op = envelope.operations[0];
   const evidence: Evidence = {
     hash: Buffer.from(envelope.hash()).toString("hex"),
