@@ -38,7 +38,7 @@ export default function Home() {
           {/* Subtitle */}
           <p className="animate-[fadeInUp_0.8s_ease-out_0.2s_both] mx-auto mb-10 max-w-2xl text-base sm:text-lg md:text-xl font-light text-neutral-400 tracking-tight leading-relaxed">
             Turn your Stellar account into a simple human-readable payment identity.
-            Receive USDC through a link or QR code — then cash out to your local bank
+            Receive USDC through a link or QR code — then cash out in supported local currencies
             through a compatible anchor.
           </p>
 

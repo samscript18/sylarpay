@@ -49,7 +49,7 @@ export function InteractiveHeroCard() {
 					</div>
 					<div>
 						<div className="text-[10px] uppercase font-mono tracking-wider text-neutral-400">Cash Out Rail</div>
-						<div className="text-xs font-medium text-neutral-200">SEP-24 · USDC → NGN</div>
+						<div className="text-xs font-medium text-neutral-200">SEP-24 · Anchor-powered</div>
 					</div>
 				</div>
 			</div>

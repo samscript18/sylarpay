@@ -28,7 +28,7 @@ export function HowItWorks() {
 		{
 			num: "04",
 			title: "Cash out locally",
-			description: "Use a compatible Stellar anchor (SEP-24) to convert your USDC into local fiat like NGN directly into your bank or mobile money.",
+			description: "Redeem USDC through a compatible Stellar anchor. Available currencies and payout methods depend on the provider.",
 			icon: ArrowDownToDot,
 			tag: "Fiat Off-Ramp",
 		},

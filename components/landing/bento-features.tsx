@@ -5,7 +5,6 @@ import { ShieldCheck, ArrowUpRight, Lock, Layers, Sparkles, Check, RefreshCw, Cp
 
 export function BentoFeatures() {
 	const [activeStep, setActiveStep] = useState(2);
-	const [demoAmount, setDemoAmount] = useState(150);
 
 	const steps = [
 		{
@@ -30,9 +29,9 @@ export function BentoFeatures() {
 			badge: "Immutable",
 		},
 		{
-			title: "4. SEP-24 Cash Out Ready",
-			detail: "Recipient can redeem to local fiat (NGN)",
-			status: "Available Instant",
+			title: "4. Anchor Cash Out",
+			detail: "Supported currencies depend on the anchor",
+			status: "Provider-dependent",
 			time: "SEP-24 Rail",
 			badge: "Anchor Off-Ramp",
 		},
@@ -165,29 +164,20 @@ export function BentoFeatures() {
 								</span>
 							</div>
 
-							<h3 className="text-xl font-medium tracking-tight text-white mb-2">Cash Out to Local Fiat</h3>
+							<h3 className="text-xl font-medium tracking-tight text-white mb-2">Cash out locally</h3>
 							<p className="text-xs text-neutral-400 mb-5 font-normal leading-relaxed">
-								Compatible with Stellar anchors for local fiat redemption (such as NGN). Payout happens directly through supported local banking rails.
+								Connect to a compatible Stellar anchor to redeem USDC into supported local currencies.
 							</p>
 
-							{/* Calculator Box */}
-							<div className="rounded-xl border border-white/5 bg-black/60 p-4 mb-4">
-								<div className="flex items-center justify-between text-[11px] text-neutral-400 mb-2">
-									<span>USDC Received</span>
-									<span className="font-sans text-white font-semibold">${demoAmount}.00 USDC</span>
-								</div>
-								<div className="h-px bg-white/5 my-2" />
-								<div className="flex items-center justify-between text-[11px] text-emerald-400">
-									<span>Estimated Payout (NGN)</span>
-									<span className="font-sans font-bold text-sm text-emerald-300">₦{(demoAmount * 1590).toLocaleString()}</span>
-								</div>
-								<div className="text-[9px] text-neutral-500 font-sans mt-1 text-right">Est. Rate: 1 USDC = ₦1,590 NGN</div>
+							<div className="rounded-xl border border-white/5 bg-black/40 p-4 mb-4">
+								<p className="text-xs leading-relaxed text-neutral-300">NGN availability depends on the configured anchor.</p>
+								<p className="mt-3 border-t border-white/5 pt-3 text-[11px] leading-relaxed text-neutral-500">Testnet reference demo: USD · simulated fiat payout. NGN is not supported by this reference anchor.</p>
 							</div>
 						</div>
 
 						<div className="text-[11px] text-neutral-500 flex items-center gap-1.5 font-sans">
 							<Zap size={13} className="text-emerald-400" />
-							Powered by SEP-24 Anchor protocol
+							SEP-24 • Anchor-powered
 						</div>
 					</div>
 				</Tilt3D>

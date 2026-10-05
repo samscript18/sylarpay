@@ -28,7 +28,7 @@ export function StatsTicker() {
       label: "Local Off-Ramp",
       value: "SEP-24",
       unit: "Rail",
-      detail: "Direct Fiat Cash Out (NGN)",
+      detail: "Supported fiat varies by anchor",
       href: "https://stellar.org/developers-blog/sep-24-hosted-deposit-and-withdrawal",
     },
   ];
