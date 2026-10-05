@@ -54,6 +54,28 @@ export async function json(request: Request) {
 }
 export function sameOrigin(request: Request) {
   const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin)
-    throw new AppError("Invalid request origin.", 403);
+  if (!origin) {
+    if (request.headers.get("sec-fetch-site") === "cross-site")
+      throw new AppError("Invalid request origin.", 403);
+    return;
+  }
+  // HTTPS terminates at hosting proxies. Use trusted deployment configuration,
+  // not the internal HTTP URL or client-controlled forwarded headers.
+  const allowed = new Set<string>();
+  for (const value of [
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.RENDER_EXTERNAL_URL,
+  ]) {
+    if (!value) continue;
+    try {
+      const url = new URL(value);
+      if (url.protocol === "https:" && !url.username && !url.password)
+        allowed.add(url.origin);
+    } catch {
+      /* An invalid setting must never authorize an origin. */
+    }
+  }
+  if (process.env.NODE_ENV !== "production")
+    allowed.add(new URL(request.url).origin);
+  if (!allowed.has(origin)) throw new AppError("Invalid request origin.", 403);
 }
