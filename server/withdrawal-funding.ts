@@ -12,12 +12,6 @@ import { addressSchema, amountSchema, units } from "@/lib/validation";
 import { withdrawalStatus } from "./offramp";
 import { AppError } from "./http";
 import { horizon, balance } from "./stellar";
-interface FundingRow {
-  id: string;
-  account: string;
-  fundingXdr: string | null;
-  fundingHash: string | null;
-}
 export interface FundingReview {
   xdr: string;
   destination: string;
@@ -28,12 +22,10 @@ export interface FundingReview {
   assetCode: string;
   issuer: string;
 }
-function owned(account: string, id: string) {
-  const row = db()
-    .prepare(
-      "SELECT id,account,fundingXdr,fundingHash FROM withdrawals WHERE id=? AND account=? AND network=?",
-    )
-    .get(id, account, getConfig().network) as FundingRow | undefined;
+async function owned(account: string, id: string) {
+  const row = await (
+    await db()
+  ).Withdrawal.findOne({ id, account, network: getConfig().network }).lean();
   if (!row) throw new AppError("Withdrawal not found.", 404);
   return row;
 }
@@ -59,7 +51,7 @@ export async function prepareFunding(
   account: string,
   id: string,
 ): Promise<FundingReview> {
-  const row = owned(account, id);
+  const row = await owned(account, id);
   if (row.fundingHash)
     throw new AppError(
       `Transfer already submitted: ${row.fundingHash}. Check its confirmation before making another transfer.`,
@@ -96,11 +88,17 @@ export async function prepareFunding(
     .addMemo(memo(status.withdrawalMemoType, status.withdrawalMemo))
     .setTimeout(180)
     .build();
-  db()
-    .prepare(
-      "UPDATE withdrawals SET fundingXdr=? WHERE id=? AND fundingHash IS NULL",
-    )
-    .run(tx.toXDR(), id);
+  const prepared = await (
+    await db()
+  ).Withdrawal.updateOne(
+    { id, account, network: c.network, fundingHash: null },
+    { $set: { fundingXdr: tx.toXDR() } },
+  );
+  if (!prepared.matchedCount)
+    throw new AppError(
+      "Transfer already submitted. Check its confirmation before retrying.",
+      409,
+    );
   return {
     xdr: tx.toXDR(),
     destination,
@@ -117,7 +115,7 @@ export async function submitFunding(
   id: string,
   signed: string,
 ) {
-  const row = owned(account, id),
+  const row = await owned(account, id),
     c = getConfig();
   if (!row.fundingXdr)
     throw new AppError("Review the anchor transfer before signing.");
@@ -135,12 +133,18 @@ export async function submitFunding(
   if (row.fundingHash && row.fundingHash !== hash)
     throw new AppError("A different transfer has already been submitted.", 409);
   // Reserve this exact network hash before submission; retries can only replay the same transaction.
-  const reserved = db()
-    .prepare(
-      "UPDATE withdrawals SET fundingHash=? WHERE id=? AND (fundingHash IS NULL OR fundingHash=?)",
-    )
-    .run(hash, id, hash);
-  if (!reserved.changes)
+  const reserved = await (
+    await db()
+  ).Withdrawal.updateOne(
+    {
+      id,
+      account,
+      network: c.network,
+      $or: [{ fundingHash: null }, { fundingHash: hash }],
+    },
+    { $set: { fundingHash: hash } },
+  );
+  if (!reserved.matchedCount)
     throw new AppError("A different transfer has already been submitted.", 409);
   const s = await horizon();
   try {
@@ -162,11 +166,38 @@ export async function submitFunding(
       }
     }
   }
+  return verifyFunding(account, id);
+}
+export async function verifyFunding(account: string, id: string) {
+  const row = await owned(account, id),
+    c = getConfig();
+  if (!row.fundingHash || !row.fundingXdr)
+    throw new AppError("No submitted anchor transfer is recorded.", 409);
+  const hash = row.fundingHash;
+  let evidence;
   try {
-    const evidence = await s.transactions().transaction(hash).call();
-    if (evidence.successful) return { txHash: hash, status: "CONFIRMED" };
+    const s = await horizon();
+    evidence = await s.transactions().transaction(hash).call();
   } catch {
-    /* Unindexed ledger evidence is pending, never confirmed. */
+    return { txHash: hash, status: "PENDING" };
   }
-  return { txHash: hash, status: "PENDING" };
+  if (!evidence.successful) return { txHash: hash, status: "FAILED" };
+  const original = TransactionBuilder.fromXDR(row.fundingXdr, c.passphrase);
+  if (!evidence.envelope_xdr)
+    throw new AppError("Stellar transfer evidence is incomplete.", 502);
+  const actual = TransactionBuilder.fromXDR(
+    evidence.envelope_xdr,
+    c.passphrase,
+  );
+  if (
+    !(actual instanceof Transaction) ||
+    actual.source !== account ||
+    Buffer.from(actual.hash()).toString("hex") !== hash ||
+    !Buffer.from(actual.hash()).equals(Buffer.from(original.hash()))
+  )
+    throw new AppError(
+      "Stellar transfer does not match the reviewed anchor transaction.",
+      502,
+    );
+  return { txHash: hash, status: "CONFIRMED" };
 }
