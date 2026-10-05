@@ -174,8 +174,6 @@ npx tsx scripts/audit-testnet.ts
 
 This requires the local deployed configuration and existing `LIVE-TEST.json`; it checks current registry resolution/verification, deployment success, exact payment evidence, duplicate indexing and ledger balance, and writes `docs/AUDIT-TESTNET.json`. Follow the explicit ten-step manual Freighter rehearsal in [DEMO.md](docs/DEMO.md) before presenting. Browser layout fixtures do not establish extension approval or phone wallet compatibility.
 
-## Known limitations
-
-This is a Testnet hackathon MVP, not a production financial service. MongoDB must be reachable and protected with database authentication, restricted network access, and backups for hosted use. Freighter primary-key wallets are supported; multisig/contract wallets and fee-bump payment envelopes are outside the MVP. Testnet resets erase accounts/contracts, requiring redeployment and reseeding. No provider-specific NGN bank payout has been exercised with this reference anchor. Its USD fiat side is simulated, and user-approved funding and hosted-flow validation remain manual. Real Freighter extension approvals require the user; automated tests exercise signed network/API integration and frontend states separately. See readiness and security docs for remaining external validation.
-
 Primary integration references: [Stellar SDK](https://stellar.github.io/js-stellar-sdk/), [Circle Stellar addresses](https://www.circle.com/multi-chain-usdc/stellar), [Soroban SDK](https://github.com/stellar/rs-soroban-sdk), [SEP-24](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md), [SEP-10](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md).
+
+Hosted deployment settings for Vercel and Render, including the required Node runtime and environment variables, are in [docs/DEPLOY.md](docs/DEPLOY.md).

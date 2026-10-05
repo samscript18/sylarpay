@@ -195,3 +195,15 @@ See SECURITY.md for the production controls and development-only dependency find
 ## Payout currency mismatch fix — 2026-10-05
 
 Simulated-fiat mode previously bypassed the SEP-38 currency intersection, allowing an unsupported NGN request to the USD/CAD reference anchor. Currency discovery now always intersects the provider metadata. Local and example reference configuration select USD. A reported payout asset mismatch remains a blocking error (HTTP 409), identifies the requested and reported assets, and does not mutate the withdrawal or permit funding. Existing mismatched sessions require partner reconciliation; no funds were sent and no session was automatically cancelled by this fix. The supplied withdrawal ID was not found in the currently configured database, so its individual provider response was not independently verified. Regression coverage rejects unsupported NGN before external initiation even in simulated-fiat mode.
+
+## Payment receipts — 2026-10-05
+
+Each recent activity row opens `/activity/:txHash`, with an explicit operation selector for multi-send entries. Account/network ownership checks guard the detail API, including recipient access to each batch operation. Notes remain scoped to the authenticated account and stored off-chain. Confirmed, pending, failed, unavailable, disconnected and skeleton-loading states are covered. No payment or signature was generated.
+
+158 app tests pass. Two additional Playwright fixture checks pass at desktop and iPhone widths; these check navigation, receipt layout, note saving and pending/failed wording, not live ledger verification. Production build, typecheck and lint passed (existing lint warnings remain). The receipt screenshots were visually inspected. Test additions remain local under the requested `/tests` exclusion.
+
+## Render origin validation fix — 2026-10-05
+
+A same-site unauthenticated POST to the deployed HTTPS origin reproduced HTTP 403 even though `/api/config` reported the correct app URL. Render terminates HTTPS before forwarding internal HTTP requests. The API now authorizes origins from trusted NEXT_PUBLIC_APP_URL and RENDER_EXTERNAL_URL configuration instead of the internal request URL; it does not trust client forwarding headers. Production rejects foreign, malformed, null, credentialed and prefix-confusable origins. Non-browser requests retain existing behavior; explicitly cross-site requests without Origin are rejected.
+
+Seven new origin tests pass. The complete local suite reports 163 passing and two failing cash-out UI assertions related to the existing local edits hiding NGN options; those tests and UI changes were not modified as part of this fix. No wallet signing, authentication challenge creation or payment submission was automated. The origin fix is isolated from unpublished UI/test changes.
