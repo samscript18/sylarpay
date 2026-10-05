@@ -42,6 +42,7 @@ import {
 } from "./registry";
 import {
   history,
+  paymentDetails,
   verifyPayment,
   assertPayment,
   storePayment,
@@ -109,6 +110,10 @@ export function handleGet(req: Request) {
         ...(await usdcAccountState(account)),
         payments: await history(account),
       });
+    }
+    if (p[0] === "payments" && p[1]) {
+      const operation = url.searchParams.get("operation");
+      return reply(await paymentDetails(account, hashSchema.parse(p[1]), operation === null ? undefined : z.coerce.number().int().min(0).max(99).parse(operation)));
     }
     if (p[0] === "payments") return reply(await history(account));
     if (p[0] === "withdrawals" && p[1])

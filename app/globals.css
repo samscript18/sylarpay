@@ -817,3 +817,5 @@ summary:hover {
 .multi-send-amount .field { flex: 1; min-width: 0; }
 .multi-send-review { padding: 10px 0 18px; border-bottom: 1px solid var(--line); }
 .multi-send-review .account { margin-top: 10px; }
+
+.workspace.receipt-workspace { max-width: 640px; }

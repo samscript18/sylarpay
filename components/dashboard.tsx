@@ -30,7 +30,8 @@ function Activity({ p, account }: { p: PaymentRecord; account: string }) {
 	}
 
 	return (
-		<div className="border-b border-white/[0.06] last:border-b-0 py-4 transition-colors">
+		<div className="relative group border-b border-white/[0.06] last:border-b-0 rounded-xl py-4 transition-colors hover:bg-white/[0.025]">
+			<Link href={`/activity/${p.txHash}${p.operationIndex !== undefined ? `?operation=${p.operationIndex}` : ""}`} className="absolute inset-0 z-10 rounded-xl focus-visible:outline-2 focus-visible:outline-emerald-400" aria-label={`View ${incoming ? "incoming payment" : `payment to @${p.username}`} details, ${displayAmount(p.amount)} USDC`} />
 			<div className="flex items-center justify-between gap-4">
 				<div className="flex items-center gap-3.5 min-w-0">
 					<span
@@ -58,7 +59,7 @@ function Activity({ p, account }: { p: PaymentRecord; account: string }) {
 						<span className="text-xs font-normal text-emerald-400 ml-1">USDC</span>
 					</div>
 
-					<div className="flex items-center justify-end gap-2 mt-1">
+					<div className="relative z-20 flex items-center justify-end gap-2 mt-1">
 						<a
 							className="text-[11px] font-sans text-neutral-500 hover:text-emerald-400 transition-colors inline-flex items-center gap-0.5"
 							href={explorer(p.network, p.txHash)}
@@ -75,7 +76,7 @@ function Activity({ p, account }: { p: PaymentRecord; account: string }) {
 			</div>
 
 			{show && (
-				<div className="mt-3 rounded-xl border border-white/10 bg-black/60 p-3.5 text-left text-xs animate-[fadeInUp_0.2s_ease-out]">
+				<div className="relative z-20 mt-3 rounded-xl border border-white/10 bg-black/60 p-3.5 text-left text-xs animate-[fadeInUp_0.2s_ease-out]">
 					<div className="flex items-center justify-between mb-2">
 						<label htmlFor={`note-${p.txHash}-${p.operationIndex ?? 0}`} className="font-sans uppercase text-[10px] tracking-wider text-neutral-400 flex items-center gap-1">
 							<Lock size={10} className="text-emerald-400" />

@@ -187,6 +187,24 @@ export async function storePayment(p: PaymentRecord) {
     },
   );
 }
+export async function paymentDetails(account: string, txHash: string, operationIndex?: number): Promise<PaymentRecord> {
+  const { Payment, Batch, Note } = await db();
+  const network = getConfig().network;
+  let payment: PaymentRecord | null = null;
+  if (operationIndex === undefined) {
+    payment = await Payment.findOne({ network, txHash, $or: [{ senderAddress: account }, { recipientAddress: account }] }, publicFields).lean();
+  } else {
+    const batch = await Batch.findOne({ network, txHash, $or: [{ senderAddress: account }, { "payments.expectedAddress": account }] }, publicFields).lean();
+    const recipient = batch?.payments[operationIndex];
+    if (batch && recipient && (batch.senderAddress === account || recipient.expectedAddress === account)) {
+      payment = { txHash, network: batch.network, senderAddress: batch.senderAddress, recipientAddress: recipient.expectedAddress, username: recipient.username, assetCode: batch.assetCode, assetIssuer: batch.assetIssuer, amount: recipient.amount, status: batch.status, createdAt: batch.createdAt, confirmedAt: batch.confirmedAt, failureReason: batch.failureReason, operationIndex };
+    }
+  }
+  if (!payment) throw new AppError("Payment not found.", 404);
+  const note = await Note.findOne({ network, txHash, account }, publicFields).lean();
+  return { ...payment, ...(note ? { note: note.note } : {}) };
+}
+
 export async function history(account: string) {
   const c = getConfig(),
     { Payment, Batch, Note } = await db();
