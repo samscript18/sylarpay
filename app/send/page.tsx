@@ -1,4 +1,6 @@
-import { PaymentForm } from "@/components/payment-form";
+import { SendPanel } from "@/components/send-panel";
+import { FaqAccordion } from "@/components/faq-accordion";
+
 export default function Send() {
   return (
     <main className="workspace">
@@ -7,7 +9,8 @@ export default function Send() {
         <h1>Send USDC</h1>
         <p>A username is all you need to get started.</p>
       </div>
-      <PaymentForm />
+      <SendPanel />
+      <FaqAccordion />
     </main>
   );
 }
