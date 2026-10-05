@@ -1,4 +1,14 @@
-import { prepareFunding, submitFunding } from "./withdrawal-funding";
+import {
+  prepareFunding,
+  submitFunding,
+  verifyFunding,
+} from "./withdrawal-funding";
+import { searchRecipients } from "./recipients";
+import {
+  prepareMultiPayment,
+  submitMultiPayment,
+  verifyMultiPayment,
+} from "./multi-payments";
 import { NextResponse } from "next/server";
 import {
   Address,
@@ -18,10 +28,11 @@ import {
   paymentSchema,
   profileSchema,
   usernameSchema,
+  multiPaymentSchema,
 } from "@/lib/validation";
 import { safe, json, sameOrigin, AppError } from "./http";
 import { authenticate, challenge, logout, requireAccount } from "./auth";
-import { balance, horizon, preparePayment } from "./stellar";
+import { usdcAccountState, horizon, preparePayment } from "./stellar";
 import {
   prepareRegistry,
   read,
@@ -35,12 +46,13 @@ import {
   assertPayment,
   storePayment,
 } from "./payments";
-import { db, Profile } from "./db";
+import { db, publicFields } from "./db";
 import {
   createWithdrawal,
   provider,
   Sep24Provider,
   withdrawalStatus,
+  refreshWithdrawalAccess,
 } from "./offramp";
 function path(req: Request) {
   return new URL(req.url).pathname.slice(5).split("/");
@@ -55,12 +67,16 @@ export function handleGet(req: Request) {
       c = getConfig();
     if (p[0] === "config") return reply(c);
     if (p[0] === "session") return reply({ account: await requireAccount() });
+    if (p[0] === "recipients")
+      return reply(await searchRecipients(url.searchParams.get("query") || ""));
     if (p[0] === "users" && p[1]) {
       const resolved = await resolveUsername(decodeURIComponent(p[1]));
-      const profile = db()
-        .prepare("SELECT displayName,bio FROM profiles WHERE account=?")
-        .get(resolved.address) as
-        Pick<Profile, "displayName" | "bio"> | undefined;
+      const profile = await (
+        await db()
+      ).Profile.findOne(
+        { account: resolved.address },
+        { _id: 0, displayName: 1, bio: 1 },
+      ).lean();
       return reply({
         ...resolved,
         profile: profile || { displayName: `@${resolved.username}`, bio: "" },
@@ -78,9 +94,9 @@ export function handleGet(req: Request) {
     if (p[0] === "anchors") return reply(await provider().getInfo());
     const account = await requireAccount();
     if (p[0] === "me") {
-      const profile = db()
-        .prepare("SELECT * FROM profiles WHERE account=?")
-        .get(account) as Profile | undefined;
+      const profile = await (
+        await db()
+      ).Profile.findOne({ account }, publicFields).lean();
       let identity = null;
       if (profile) {
         const r = await resolveUsername(profile.username);
@@ -90,11 +106,11 @@ export function handleGet(req: Request) {
         account,
         profile: identity ? profile : null,
         identity,
-        balance: await balance(account),
-        payments: history(account),
+        ...(await usdcAccountState(account)),
+        payments: await history(account),
       });
     }
-    if (p[0] === "payments") return reply(history(account));
+    if (p[0] === "payments") return reply(await history(account));
     if (p[0] === "withdrawals" && p[1])
       return reply(
         await withdrawalStatus(account, z.string().uuid().parse(p[1])),
@@ -109,7 +125,7 @@ export function handlePost(req: Request) {
       body = await json(req),
       c = getConfig();
     if (p[0] === "auth" && p[1] === "challenge")
-      return reply(challenge(addressSchema.parse(body.account)));
+      return reply(await challenge(addressSchema.parse(body.account)));
     if (p[0] === "auth" && p[1] === "login") {
       const v = z
         .object({ id: z.string().length(48), signed: z.string().max(20000) })
@@ -121,6 +137,29 @@ export function handlePost(req: Request) {
       return reply({ ok: true });
     }
     const account = await requireAccount();
+    if (p[0] === "multi-payments") {
+      const intent = multiPaymentSchema.parse(body);
+      if (p[1] === "prepare")
+        return reply(await prepareMultiPayment(account, intent));
+      if (p[1] === "submit")
+        return reply(
+          await submitMultiPayment(
+            account,
+            intent,
+            z.string().max(20000).parse(body.signed),
+          ),
+        );
+      if (p[1] === "verify")
+        return reply(
+          await verifyMultiPayment(
+            account,
+            intent,
+            hashSchema.parse(body.txHash),
+          ),
+        );
+      throw new AppError("Unknown multi-send action.", 404);
+    }
+
     if (p[0] === "registry" && p[1] === "prepare") {
       const v = z
         .object({
@@ -160,17 +199,20 @@ export function handlePost(req: Request) {
           "Only the current username owner may edit this profile.",
           403,
         );
-      db()
-        .prepare(
-          "INSERT INTO profiles VALUES(?,?,?,?,?) ON CONFLICT(account) DO UPDATE SET username=excluded.username,displayName=excluded.displayName,bio=excluded.bio,updatedAt=excluded.updatedAt",
-        )
-        .run(
-          account,
-          v.username,
-          v.displayName,
-          v.bio,
-          new Date().toISOString(),
-        );
+      await (
+        await db()
+      ).Profile.updateOne(
+        { account },
+        {
+          $set: {
+            username: v.username,
+            displayName: v.displayName,
+            bio: v.bio,
+            updatedAt: new Date().toISOString(),
+          },
+        },
+        { upsert: true, runValidators: true },
+      );
       if (!r.verified) await verifyProfileOnChain(account);
       return reply({ ok: true });
     }
@@ -257,7 +299,7 @@ export function handlePost(req: Request) {
           );
         }
       }
-      storePayment({
+      await storePayment({
         txHash: hash,
         network: c.network,
         senderAddress: account,
@@ -279,17 +321,29 @@ export function handlePost(req: Request) {
       const v = z
         .object({ txHash: hashSchema, note: z.string().max(500) })
         .parse(body);
-      const found = db()
-        .prepare(
-          "SELECT 1 FROM payments WHERE txHash=? AND network=? AND (senderAddress=? OR recipientAddress=?)",
-        )
-        .get(v.txHash, c.network, account, account);
-      if (!found) throw new AppError("Payment not found.", 404);
-      db()
-        .prepare(
-          "INSERT INTO notes VALUES(?,?,?,?) ON CONFLICT(network,txHash,account) DO UPDATE SET note=excluded.note",
-        )
-        .run(c.network, v.txHash, account, v.note);
+      const { Payment, Batch, Note } = await db();
+      const found = await Payment.exists({
+        txHash: v.txHash,
+        network: c.network,
+        $or: [{ senderAddress: account }, { recipientAddress: account }],
+      });
+      if (
+        !found &&
+        !(await Batch.exists({
+          network: c.network,
+          txHash: v.txHash,
+          $or: [
+            { senderAddress: account },
+            { "payments.expectedAddress": account },
+          ],
+        }))
+      )
+        throw new AppError("Payment not found.", 404);
+      await Note.updateOne(
+        { network: c.network, txHash: v.txHash, account },
+        { $set: { note: v.note } },
+        { upsert: true, runValidators: true },
+      );
       return reply({ ok: true });
     }
     if (p[0] === "trustline") {
@@ -332,17 +386,26 @@ export function handlePost(req: Request) {
         throw new AppError("A real anchor is not configured.");
       return reply(await a.challenge(account));
     }
+    if (p[0] === "withdrawals" && p[1] === "reauthenticate") {
+      const v = z
+        .object({ id: z.string().uuid(), signed: z.string().min(1).max(20000) })
+        .parse(body);
+      return reply(await refreshWithdrawalAccess(account, v.id, v.signed));
+    }
     if (p[0] === "withdrawals" && p[1] === "fund") {
       const v = z
         .object({
           id: z.string().uuid(),
           signed: z.string().max(20000).optional(),
+          check: z.boolean().optional(),
         })
         .parse(body);
       return reply(
         v.signed
           ? await submitFunding(account, v.id, v.signed)
-          : await prepareFunding(account, v.id),
+          : v.check
+            ? await verifyFunding(account, v.id)
+            : await prepareFunding(account, v.id),
       );
     }
     if (p[0] === "withdrawals")

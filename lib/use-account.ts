@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "./api";
 import { useWallet } from "@/components/wallet-provider";
 import type { Profile, PaymentRecord } from "@/server/db";
@@ -9,33 +9,29 @@ export interface AccountData {
   identity: Recipient | null;
   profile: Profile | null;
   balance: string;
+  usdcTrustline: "missing" | "unauthorized" | "ready";
   payments: PaymentRecord[];
 }
 export function useAccount() {
-  const { account } = useWallet(),
-    [data, setData] = useState<AccountData | null>(null),
-    [error, setError] = useState(""),
-    [loading, setLoading] = useState(false);
-  const refresh = useCallback(async () => {
-    if (!account) return;
-    setLoading(true);
-    setError("");
-    try {
-      setData(await api<AccountData>("/api/me"));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load your account.");
-    } finally {
-      setLoading(false);
-    }
-  }, [account]);
-  useEffect(() => {
-    const timer = setTimeout(() => void refresh(), 0);
-    return () => clearTimeout(timer);
-  }, [refresh]);
+  const { account, config } = useWallet();
+  const query = useQuery({
+    queryKey: ["account", config?.network, account],
+    queryFn: ({ signal }) => api<AccountData>("/api/me", undefined, { signal }),
+    enabled: !!account,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchInterval: 20000,
+    refetchIntervalInBackground: false,
+  });
   return {
-    data: account && data?.account === account ? data : null,
-    error,
-    loading,
-    refresh,
+    data: account && query.data?.account === account ? query.data : null,
+    error: query.error?.message || "",
+    loading: !!account && query.isPending,
+    refreshing: query.isFetching,
+    refresh: async () => {
+      const result = await query.refetch();
+      if (result.error) throw result.error;
+      return result.data;
+    },
   };
 }

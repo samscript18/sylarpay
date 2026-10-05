@@ -42,6 +42,27 @@ export const paymentSchema = z.object({
   username: usernameSchema,
   amount: amountSchema,
 });
+export const multiPaymentSchema = z
+  .object({
+    payments: z
+      .array(
+        z.object({
+          username: usernameSchema,
+          amount: amountSchema,
+          expectedAddress: addressSchema,
+        }),
+      )
+      .min(2)
+      .max(10),
+  })
+  .refine(
+    (v) =>
+      new Set(v.payments.map((p) => p.username)).size === v.payments.length,
+    "Each username can appear only once.",
+  );
+export function decimalUnits(value: bigint) {
+  return `${value / 10000000n}.${(value % 10000000n).toString().padStart(7, "0")}`;
+}
 export const profileSchema = z.object({
   username: usernameSchema,
   displayName: z.string().trim().min(2).max(60),

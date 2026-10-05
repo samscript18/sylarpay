@@ -17,6 +17,9 @@ export async function horizon() {
   return s;
 }
 export async function balance(account: string) {
+  return (await usdcAccountState(account)).balance;
+}
+export async function usdcAccountState(account: string) {
   const c = getConfig(),
     s = await horizon();
   try {
@@ -28,7 +31,14 @@ export async function balance(account: string) {
         v.asset_code === c.assetCode &&
         v.asset_issuer === c.issuer,
     );
-    return b?.balance || "0.0000000";
+    return {
+      balance: b?.balance || "0.0000000",
+      usdcTrustline: !b
+        ? ("missing" as const)
+        : "is_authorized" in b && b.is_authorized === false
+          ? ("unauthorized" as const)
+          : ("ready" as const),
+    };
   } catch (e) {
     if (
       e instanceof Error &&

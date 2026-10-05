@@ -2,7 +2,7 @@ import { Transaction, TransactionBuilder } from "@stellar/stellar-sdk";
 import { getConfig } from "@/lib/config";
 import { units } from "@/lib/validation";
 import { AppError, log } from "./http";
-import { db, PaymentRecord } from "./db";
+import { db, duplicateKey, publicFields, PaymentRecord } from "./db";
 import { horizon } from "./stellar";
 import { resolveUsername } from "./registry";
 export interface Evidence {
@@ -51,9 +51,11 @@ export async function verifyPayment(
   const c = getConfig();
   const s = await horizon();
   const recipient = await resolveUsername(input.username);
-  const existing = db()
-    .prepare("SELECT * FROM payments WHERE network=? AND txHash=?")
-    .get(c.network, input.txHash) as PaymentRecord | undefined;
+  const { Payment } = await db();
+  const existing = await Payment.findOne(
+    { network: c.network, txHash: input.txHash },
+    publicFields,
+  ).lean();
   if (
     existing &&
     (existing.senderAddress !== sender ||
@@ -128,15 +130,20 @@ export async function verifyPayment(
     });
   } catch (e) {
     if (existing && existing.status !== "CONFIRMED")
-      db()
-        .prepare(
-          "UPDATE payments SET status='FAILED',failureReason=? WHERE txHash=? AND network=?",
-        )
-        .run(
-          e instanceof Error ? e.message : "Verification failed",
-          input.txHash,
-          c.network,
-        );
+      await Payment.updateOne(
+        {
+          txHash: input.txHash,
+          network: c.network,
+          status: { $ne: "CONFIRMED" },
+        },
+        {
+          $set: {
+            status: "FAILED",
+            failureReason:
+              e instanceof Error ? e.message : "Verification failed",
+          },
+        },
+      );
     throw e;
   }
   const record: PaymentRecord = {
@@ -153,22 +160,98 @@ export async function verifyPayment(
     confirmedAt: tx.created_at,
     failureReason: null,
   };
-  storePayment(record);
+  await storePayment(record);
   log("payment_verified", { network: c.network });
   return record;
 }
-export function storePayment(p: PaymentRecord) {
-  db()
-    .prepare(
-      `INSERT INTO payments(txHash,network,senderAddress,recipientAddress,username,assetCode,assetIssuer,amount,status,createdAt,confirmedAt,failureReason) VALUES(@txHash,@network,@senderAddress,@recipientAddress,@username,@assetCode,@assetIssuer,@amount,@status,@createdAt,@confirmedAt,@failureReason) ON CONFLICT(network,txHash) DO UPDATE SET status=excluded.status,confirmedAt=excluded.confirmedAt,failureReason=excluded.failureReason WHERE payments.status!='CONFIRMED'`,
-    )
-    .run(p);
+export async function storePayment(p: PaymentRecord) {
+  const { Payment } = await db();
+  // Upsert the immutable intent; confirmation can never be downgraded by a racing submission.
+  try {
+    await Payment.updateOne(
+      { network: p.network, txHash: p.txHash },
+      { $setOnInsert: p },
+      { upsert: true, runValidators: true },
+    );
+  } catch (e) {
+    if (!duplicateKey(e)) throw e;
+  }
+  await Payment.updateOne(
+    { network: p.network, txHash: p.txHash, status: { $ne: "CONFIRMED" } },
+    {
+      $set: {
+        status: p.status,
+        confirmedAt: p.confirmedAt,
+        failureReason: p.failureReason,
+      },
+    },
+  );
 }
-export function history(account: string) {
-  const c = getConfig();
-  return db()
-    .prepare(
-      "SELECT p.*, n.note FROM payments p LEFT JOIN notes n ON p.network=n.network AND p.txHash=n.txHash AND n.account=? WHERE p.network=? AND (senderAddress=? OR recipientAddress=?) ORDER BY createdAt DESC LIMIT 50",
-    )
-    .all(account, c.network, account, account) as PaymentRecord[];
+export async function history(account: string) {
+  const c = getConfig(),
+    { Payment, Batch, Note } = await db();
+  const payments = await Payment.find(
+    {
+      network: c.network,
+      $or: [{ senderAddress: account }, { recipientAddress: account }],
+    },
+    publicFields,
+  )
+    .sort({ createdAt: -1 })
+    .limit(50)
+    .lean();
+  const batches = await Batch.find(
+    {
+      network: c.network,
+      $or: [
+        { senderAddress: account },
+        { "payments.expectedAddress": account },
+      ],
+    },
+    publicFields,
+  )
+    .sort({ createdAt: -1 })
+    .limit(50)
+    .lean();
+  const indexed: PaymentRecord[] = [
+    ...payments,
+    ...batches.flatMap((batch) =>
+      batch.payments.flatMap((p, operationIndex) =>
+        batch.senderAddress === account || p.expectedAddress === account
+          ? [
+              {
+                txHash: batch.txHash,
+                network: batch.network,
+                senderAddress: batch.senderAddress,
+                recipientAddress: p.expectedAddress,
+                username: p.username,
+                assetCode: batch.assetCode,
+                assetIssuer: batch.assetIssuer,
+                amount: p.amount,
+                status: batch.status,
+                createdAt: batch.createdAt,
+                confirmedAt: batch.confirmedAt,
+                failureReason: batch.failureReason,
+                operationIndex,
+              },
+            ]
+          : [],
+      ),
+    ),
+  ]
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, 50);
+  const notes = await Note.find(
+    {
+      network: c.network,
+      account,
+      txHash: { $in: indexed.map((p) => p.txHash) },
+    },
+    publicFields,
+  ).lean();
+  const byHash = new Map(notes.map((n) => [n.txHash, n.note]));
+  return indexed.map((p) => ({
+    ...p,
+    ...(byHash.has(p.txHash) ? { note: byHash.get(p.txHash) } : {}),
+  }));
 }
