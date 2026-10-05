@@ -277,67 +277,33 @@ function ConnectedPaymentForm({
 
 	return (
 		<div className="max-w-lg mx-auto">
-			{/* 1. TOP MODE SWITCHER CAPSULE (LOOFTA AESTHETIC) */}
-			<div className="flex items-center justify-between gap-3 mb-6">
-				<div className="relative flex-1 flex rounded-2xl p-1 bg-white/[0.04] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] border border-white/[0.06] overflow-hidden">
-					{/* Smooth Sliding Pill Indicator */}
-					<div
-						aria-hidden="true"
-						className={`absolute inset-y-1 w-[calc(50%-0.25rem)] rounded-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] bg-gradient-to-b from-white/[0.08] to-white/[0.03] shadow-[0_8px_24px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] border border-white/[0.08] ${
-							activeTab === "send" ? "translate-x-0" : "translate-x-[calc(100%+0.5rem)]"
-						}`}
-					/>
-
-					{/* Send Tab Button */}
-					<button
-						type="button"
-						onClick={() => {
-							setActiveTab("send");
-							setStage("edit");
-						}}
-						className="group relative z-10 flex-1 whitespace-nowrap rounded-xl px-4 py-2.5 inline-flex items-center justify-center gap-2.5 font-semibold text-[15px] tracking-[-0.01em] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.99]"
-					>
-						<span className="relative shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-full">
-							<span
-								className={`absolute inset-0 rounded-full transition-all duration-300 ${
-									activeTab === "send" ? "bg-gradient-to-br from-[#10b981] via-[#22634b] to-[#165b43] shadow-[0_10px_24px_rgba(16,185,129,0.35)] scale-[1.04]" : "bg-white/[0.06]"
-								}`}
-							/>
-							<span className={`relative z-10 flex items-center justify-center ${activeTab === "send" ? "text-white" : "text-slate-400 group-hover:text-slate-200"}`}>
-								<ArrowUp size={15} strokeWidth={2.5} />
-							</span>
-						</span>
-						<span className={`relative z-10 transition-colors duration-300 font-medium ${activeTab === "send" ? "text-white font-semibold" : "text-slate-400 group-hover:text-slate-200"}`}>Send</span>
-					</button>
-
-					{/* Receive Tab Button */}
-					<button
-						type="button"
-						onClick={() => setActiveTab("receive")}
-						className="group relative z-10 flex-1 whitespace-nowrap rounded-xl px-4 py-2.5 inline-flex items-center justify-center gap-2.5 font-semibold text-[15px] tracking-[-0.01em] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.99]"
-					>
-						<span className="relative shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-full">
-							<span
-								className={`absolute inset-0 rounded-full transition-all duration-300 ${
-									activeTab === "receive"
-										? "bg-gradient-to-br from-[#10b981] via-[#22634b] to-[#165b43] shadow-[0_10px_24px_rgba(16,185,129,0.35)] scale-[1.04]"
-										: "bg-white/[0.06]"
-								}`}
-							/>
-							<span className={`relative z-10 flex items-center justify-center ${activeTab === "receive" ? "text-white" : "text-slate-400 group-hover:text-slate-200"}`}>
-								<ArrowDown size={15} strokeWidth={2.5} />
-							</span>
-						</span>
-						<span className={`relative z-10 transition-colors duration-300 font-medium ${activeTab === "receive" ? "text-white font-semibold" : "text-slate-400 group-hover:text-slate-200"}`}>
-							Receive
-						</span>
-					</button>
+			<div className="mb-6 flex items-stretch gap-2.5">
+				<div role="group" aria-label="Payment mode" className="grid min-w-0 flex-1 grid-cols-2 gap-1 rounded-2xl border border-white/10 bg-white/[0.025] p-1">
+					{(["send", "receive"] as const).map((mode) => {
+						const selected = activeTab === mode;
+						const Icon = mode === "send" ? ArrowUp : ArrowDown;
+						return (
+							<button
+								key={mode}
+								type="button"
+								aria-pressed={selected}
+								onClick={() => {
+									setActiveTab(mode);
+									if (mode === "send") setStage("edit");
+								}}
+								className={`flex min-h-12 min-w-0 items-center justify-center gap-2 rounded-xl border px-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 ${selected ? "border-white/10 bg-white/[0.07] text-white shadow-sm" : "border-transparent text-slate-400 hover:bg-white/[0.03] hover:text-white"}`}
+							>
+								<span className={`flex size-7 shrink-0 items-center justify-center rounded-full ${selected ? "bg-emerald-500/15 text-emerald-300" : "bg-white/5 text-slate-400"}`}>
+									<Icon size={15} strokeWidth={2} aria-hidden="true" />
+								</span>
+								{mode === "send" ? "Send" : "Receive"}
+							</button>
+						);
+					})}
 				</div>
-
-				{/* History Shortcut Button */}
-				<Link href="/dashboard" className="p-3 rounded-2xl transition-all duration-300 border border-white/[0.06] bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08]" title="Activity History">
-					<Clock size={18} />
-					<span className="sr-only">Activity History</span>
+				<Link href="/dashboard" className="flex min-h-14 shrink-0 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.025] px-3 text-slate-400 transition-colors hover:bg-white/5 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400" title="Activity history">
+					<Clock size={18} aria-hidden="true" />
+					<span className="sr-only sm:not-sr-only sm:text-xs sm:font-medium">History</span>
 				</Link>
 			</div>
 

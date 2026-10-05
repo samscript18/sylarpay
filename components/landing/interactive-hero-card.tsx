@@ -72,8 +72,8 @@ export function InteractiveHeroCard() {
 							{/* Sliding Pill */}
 							<div
 								aria-hidden="true"
-								className={`absolute inset-y-1 w-[calc(50%-0.25rem)] rounded-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] bg-gradient-to-b from-white/[0.08] to-white/[0.03] shadow-[0_8px_24px_rgba(0,0,0,0.35)] border border-white/[0.08] ${
-									activeTab === "send" ? "translate-x-0" : "translate-x-[calc(100%+0.5rem)]"
+								className={`absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] bg-gradient-to-b from-white/[0.08] to-white/[0.03] shadow-[0_8px_24px_rgba(0,0,0,0.35)] border border-white/[0.08] ${
+									activeTab === "send" ? "translate-x-0" : "translate-x-full"
 								}`}
 							/>
 

@@ -290,10 +290,10 @@ function CashOutSession() {
 									}}
 									className="w-full bg-[#0a0f0d] border border-white/10 rounded-2xl px-4 py-3.5 text-white focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all text-sm"
 								>
-									<option value="NGN" disabled={!info.currencies.includes("NGN")}>
+									{/* <option value="NGN" disabled={!info.currencies.includes("NGN")}>
 										NGN
 										{info.currencies.includes("NGN") ? "" : " — unavailable"}
-									</option>
+									</option> */}
 									{info.currencies
 										.filter((v) => v !== "NGN")
 										.map((v) => (
@@ -301,9 +301,9 @@ function CashOutSession() {
 										))}
 								</select>
 							</div>
-							{!info.currencies.includes("NGN") && (
+							{/* {!info.currencies.includes("NGN") && (
 								<div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">NGN cash out is currently unavailable with this provider.</div>
-							)}
+							)} */}
 							<div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 text-xs text-zinc-400 leading-relaxed">
 								Rates, fees, and payout estimates will be shown by the anchor in its hosted experience. A withdrawal request does not mean fiat has been received.
 							</div>
