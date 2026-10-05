@@ -1,8 +1,8 @@
-# SkylarPay — Engineering Agent Instructions
+# SylarPay — Engineering Agent Instructions
 
 ## 0. PROJECT IDENTITY
 
-Project name: **SkylarPay**
+Project name: **SylarPay**
 
 Core tagline:
 
@@ -10,9 +10,9 @@ Core tagline:
 
 Product principle:
 
-> **The blockchain handles settlement. SkylarPay handles the experience.**
+> **The blockchain handles settlement. SylarPay handles the experience.**
 
-SkylarPay is a consumer payment application built on Stellar.
+SylarPay is a consumer payment application built on Stellar.
 
 The product should make receiving and sending Stellar USDC feel like a normal consumer payment experience rather than a crypto infrastructure workflow.
 
@@ -28,7 +28,7 @@ Example:
 
 `@sam`
 
-`https://skylarpay.app/@sam`
+`https://sylarpay.app/@sam`
 
 The sender should not need to manually copy or understand a long Stellar public key.
 
@@ -38,7 +38,7 @@ The recipient can later use a Stellar anchor/off-ramp to convert USDC into local
 
 # 1. NON-NEGOTIABLE PRODUCT VISION
 
-SkylarPay is NOT:
+SylarPay is NOT:
 
 - a crypto exchange
 - a trading platform
@@ -49,16 +49,16 @@ SkylarPay is NOT:
 - a custodial exchange
 - a system that pretends Stellar transactions are private
 
-SkylarPay IS:
+SylarPay IS:
 
 > A consumer payment layer on Stellar that turns a Stellar account into a human-readable payment identity.
 
 The product must feel like:
 
-1. Open SkylarPay
+1. Open SylarPay
 2. Claim `@sam`
 3. Get verified
-4. Share `skylarpay.app/@sam`
+4. Share `sylarpay.app/@sam`
 5. Someone sends USDC
 6. Payment settles on Stellar
 7. Recipient sees the money
@@ -84,7 +84,7 @@ The client does not want to understand wallets.
 
 The designer sends:
 
-`skylarpay.app/@sam`
+`sylarpay.app/@sam`
 
 The client opens it.
 
@@ -101,7 +101,7 @@ The client sends `$150 USDC`.
 
 The payment settles on Stellar.
 
-SkylarPay detects and verifies the transaction.
+SylarPay detects and verifies the transaction.
 
 The recipient sees:
 
@@ -111,7 +111,7 @@ Later, the recipient chooses:
 
 `Cash Out → NGN`
 
-SkylarPay starts a compatible Stellar anchor withdrawal flow.
+SylarPay starts a compatible Stellar anchor withdrawal flow.
 
 The anchor handles the required KYC/interactive process.
 
@@ -289,7 +289,7 @@ Do NOT invent magical account recovery.
 For MVP:
 
 - username belongs to the Stellar account
-- if the user loses wallet access, SkylarPay cannot magically recover it
+- if the user loses wallet access, SylarPay cannot magically recover it
 - the app may provide an explicit transfer/recovery mechanism only if ownership can be cryptographically proven
 
 Do not claim social recovery unless it is actually implemented.
@@ -298,7 +298,7 @@ Do not claim social recovery unless it is actually implemented.
 
 # 8. VERIFICATION SYSTEM
 
-SkylarPay should have a verification badge.
+SylarPay should have a verification badge.
 
 The badge must mean something.
 
@@ -312,7 +312,7 @@ Conceptually:
 Verified
 ```
 
-means the account has satisfied SkylarPay's defined verification requirements.
+means the account has satisfied SylarPay's defined verification requirements.
 
 For MVP, the verification criteria can be:
 
@@ -330,7 +330,7 @@ Do not imply government identity verification unless actual KYC has occurred.
 
 If verification is app-issued, call it something such as:
 
-`Skylar Verified`
+`Sylar Verified`
 
 not:
 
@@ -347,7 +347,7 @@ Example:
 ```text
 @sam
 
-✓ Skylar Verified
+✓ Sylar Verified
 
 Available to receive USDC
 
@@ -378,7 +378,7 @@ Every username should generate a payment URL.
 Example:
 
 ```text
-https://skylarpay.app/@sam
+https://sylarpay.app/@sam
 ```
 
 The route should dynamically resolve the username.
@@ -419,12 +419,12 @@ Never automatically send money simply because a URL contains an amount.
 
 Every payment profile should be able to generate a QR code.
 
-The QR code should encode the SkylarPay payment URL.
+The QR code should encode the SylarPay payment URL.
 
 Example:
 
 ```text
-https://skylarpay.app/@sam
+https://sylarpay.app/@sam
 ```
 
 Do not encode sensitive information into the QR code.
@@ -450,7 +450,7 @@ Example:
 ```text
 Sender opens @sam
         ↓
-SkylarPay resolves username
+SylarPay resolves username
         ↓
 Show recipient
         ↓
@@ -464,7 +464,7 @@ Transaction submitted
         ↓
 Transaction hash received
         ↓
-SkylarPay verifies transaction
+SylarPay verifies transaction
         ↓
 Payment marked confirmed
 ```
@@ -475,7 +475,7 @@ Before signing, show:
 Paying
 
 @sam
-✓ Skylar Verified
+✓ Sylar Verified
 
 Amount
 $150.00 USDC
@@ -647,7 +647,7 @@ Do NOT claim that Stellar payments are private.
 
 Stellar transactions are publicly verifiable.
 
-SkylarPay privacy means:
+SylarPay privacy means:
 
 - private app metadata remains off-chain
 - private payment notes remain off-chain
@@ -657,11 +657,11 @@ SkylarPay privacy means:
 
 Correct wording:
 
-> "SkylarPay keeps your payment context inside the app while the underlying Stellar transaction remains publicly verifiable."
+> "SylarPay keeps your payment context inside the app while the underlying Stellar transaction remains publicly verifiable."
 
 Incorrect wording:
 
-> "SkylarPay makes Stellar payments private."
+> "SylarPay makes Stellar payments private."
 
 Never use the incorrect claim.
 
@@ -692,7 +692,7 @@ Cash out is a major feature.
 Architecture:
 
 ```text
-SkylarPay
+SylarPay
    ↓
 Stellar USDC
    ↓
@@ -705,11 +705,11 @@ Local payout rail
 User bank/mobile-money account
 ```
 
-SkylarPay itself is NOT the bank.
+SylarPay itself is NOT the bank.
 
-SkylarPay itself does NOT guarantee NGN liquidity.
+SylarPay itself does NOT guarantee NGN liquidity.
 
-SkylarPay itself does NOT perform KYC unless explicitly implemented.
+SylarPay itself does NOT perform KYC unless explicitly implemented.
 
 The anchor handles the off-ramp responsibilities.
 
@@ -721,7 +721,7 @@ Use SEP-24 as the preferred MVP integration when the selected anchor supports it
 
 SEP-24 provides a hosted interactive experience where the anchor handles the required KYC/transaction interaction.
 
-SkylarPay should:
+SylarPay should:
 
 1. discover/configure the anchor
 2. authenticate as required
@@ -731,7 +731,7 @@ SkylarPay should:
 6. open the hosted anchor flow
 7. allow the user to complete required information/KYC
 8. monitor transaction status
-9. show status inside SkylarPay
+9. show status inside SylarPay
 
 Do not recreate the anchor's KYC UI.
 
@@ -745,18 +745,11 @@ Create an interface similar to:
 
 ```ts
 interface OffRampProvider {
-  getInfo(): Promise<AnchorInfo>;
+	getInfo(): Promise<AnchorInfo>;
 
-  startWithdrawal(params: {
-    assetCode: string;
-    assetIssuer?: string;
-    account: string;
-    amount?: string;
-  }): Promise<WithdrawalSession>;
+	startWithdrawal(params: { assetCode: string; assetIssuer?: string; account: string; amount?: string }): Promise<WithdrawalSession>;
 
-  getWithdrawalStatus(
-    transactionId: string
-  ): Promise<WithdrawalStatus>;
+	getWithdrawalStatus(transactionId: string): Promise<WithdrawalStatus>;
 }
 ```
 
@@ -845,7 +838,7 @@ Do not pretend otherwise.
 
 # 28. OPAY / LOCAL PAYMENT RAILS
 
-Do NOT hard-code claims that SkylarPay pays directly into OPay.
+Do NOT hard-code claims that SylarPay pays directly into OPay.
 
 A local payout rail depends on the selected anchor/provider.
 
@@ -1209,7 +1202,7 @@ Do not put everything in page components.
 
 # 40. DESIGN DIRECTION
 
-SkylarPay should look like a premium consumer fintech application.
+SylarPay should look like a premium consumer fintech application.
 
 Avoid:
 
@@ -1252,7 +1245,7 @@ Just use @username.
 Supporting text:
 
 ```text
-SkylarPay turns your Stellar account into a simple payment identity.
+SylarPay turns your Stellar account into a simple payment identity.
 Receive USDC through a username, link, or QR code — then cash out through a compatible local off-ramp.
 ```
 
@@ -1293,12 +1286,12 @@ Show:
 
 ```text
 @sam
-✓ Skylar Verified
+✓ Sylar Verified
 
 $150.00 received
 ```
 
-## Why SkylarPay
+## Why SylarPay
 
 Explain:
 
@@ -1328,7 +1321,7 @@ After wallet connection:
 Good morning, Sam
 
 @sam
-✓ Skylar Verified
+✓ Sylar Verified
 
 Balance
 
@@ -1357,7 +1350,7 @@ Receive USDC
 
 @sam
 
-skylarpay.app/@sam
+sylarpay.app/@sam
 
 [Copy Link]
 
@@ -1408,7 +1401,7 @@ $150 USDC
 To
 
 @sam
-✓ Skylar Verified
+✓ Sylar Verified
 
 Stellar account
 G...ABCD
@@ -1462,7 +1455,7 @@ Example:
 ```text
 @sam
 
-✓ Skylar Verified
+✓ Sylar Verified
 
 Designer
 
@@ -1865,7 +1858,7 @@ The UI should not depend directly on a specific wallet vendor.
 Create:
 
 ```ts
-resolveUsername(username)
+resolveUsername(username);
 ```
 
 It should:
@@ -1884,7 +1877,7 @@ It should:
 Create:
 
 ```ts
-sendUsdcPayment()
+sendUsdcPayment();
 ```
 
 It must:
@@ -1930,13 +1923,13 @@ Use decimal/string representations appropriate for Stellar asset precision.
 Example:
 
 ```ts
-"150.00"
+"150.00";
 ```
 
 Avoid:
 
 ```ts
-150.0000000001
+150.0000000001;
 ```
 
 Do not use JavaScript floating point for monetary comparisons.
@@ -1999,7 +1992,7 @@ Do not write these to Stellar.
 
 # 71. NO CUSTODY
 
-SkylarPay should not custody user funds unless explicitly required.
+SylarPay should not custody user funds unless explicitly required.
 
 Preferred architecture:
 
@@ -2066,7 +2059,7 @@ README.md
 
 The README should explain:
 
-1. What SkylarPay is
+1. What SylarPay is
 2. Product architecture
 3. Why Stellar
 4. Local setup
@@ -2097,7 +2090,7 @@ Example:
 ```text
 User
  ↓
-SkylarPay UI
+SylarPay UI
  ↓
 Wallet
  ↓
@@ -2109,7 +2102,7 @@ UsernameRegistry
 And:
 
 ```text
-SkylarPay
+SylarPay
  ↓
 SEP-24
  ↓
@@ -2147,7 +2140,7 @@ Show:
 Show:
 
 ```text
-✓ Skylar Verified
+✓ Sylar Verified
 ```
 
 ### 3. Receive
@@ -2155,7 +2148,7 @@ Show:
 Open:
 
 ```text
-skylarpay.app/@sam
+sylarpay.app/@sam
 ```
 
 ### 4. Pay
@@ -2184,7 +2177,7 @@ Cash Out
 
 Show:
 
-> "The blockchain handled the settlement. SkylarPay made it feel like a payment."
+> "The blockchain handled the settlement. SylarPay made it feel like a payment."
 
 ---
 
@@ -2259,7 +2252,7 @@ The product may explain:
 
 Do not imply usernames are a native Stellar feature.
 
-SkylarPay owns the username registry.
+SylarPay owns the username registry.
 
 ---
 
@@ -2267,7 +2260,7 @@ SkylarPay owns the username registry.
 
 Use:
 
-> "SkylarPay connects to compatible Stellar anchors for local cash-out."
+> "SylarPay connects to compatible Stellar anchors for local cash-out."
 
 Do not say:
 
@@ -2402,7 +2395,7 @@ This is critical.
 Do not create fake code that merely looks like:
 
 ```ts
-stellar.sendPayment()
+stellar.sendPayment();
 ```
 
 if it does not actually submit a Stellar transaction.
@@ -2741,7 +2734,7 @@ No fake transaction should appear in the real flow.
 
 # 94. DEFINITION OF DONE
 
-SkylarPay is not considered complete until:
+SylarPay is not considered complete until:
 
 ## Product
 
@@ -2831,5 +2824,4 @@ The winning experience should communicate:
 
 And:
 
-> **The blockchain handles the settlement. SkylarPay handles the experience.**
-
+> **The blockchain handles the settlement. SylarPay handles the experience.**

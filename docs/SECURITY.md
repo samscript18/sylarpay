@@ -13,11 +13,11 @@
 - Payment verification checks successful ledger evidence, network-bound envelope hash, sender, destination, one standard payment operation, exact USDC code+issuer, and exact integer amount. A client hash cannot mark confirmation.
 - Pending records originate from authenticated submissions. Arbitrary unindexed verification requests do not poison the shared transaction index.
 - Network + transaction hash is unique. Private notes are scoped to the authenticated sender/recipient; notes are never payment memos.
-- Withdrawal idempotency is reserved in SQLite before calling an external provider. Retries with another amount/currency and the same key are rejected.
+- Withdrawal idempotency is reserved using a unique MongoDB index before calling an external provider. Retries with another amount/currency and the same key are rejected.
 - Anchor discovery is server configuration only. Endpoints and interactive URLs must use HTTPS. SEP-10 signed challenges, network, client account, and server signing key are validated through SDK WebAuth.
 - Provider instructions determine anchor transfers. The signed XDR must match the reviewed body; the exact transaction hash is reserved before submission and a second transfer cannot be silently prepared.
 - Unknown provider states cause an error. Real completed status comes only from the provider. Demo mode is refused in production and on Mainnet, and never reports fiat payment completion.
-- SQLite is mode 0600. Anchor tokens remain server-side; the DB and its backups must be protected as sensitive operational data.
+- MONGODB_URI is server-only. Anchor tokens remain server-side; MongoDB access, credentials and backups must be protected as sensitive operational data. The retained ignored legacy SQLite backup remains mode 0600.
 - Structured logs record event/status/network, not keys, tokens, notes, KYC, or sensitive authentication bodies.
 
 ## Evidence
@@ -30,6 +30,16 @@ Final audit on 2026-10-04: zero runtime dependency vulnerabilities reported by `
 
 No production audit, custody service, government KYC, privacy for Stellar settlement, guaranteed payout rail/liquidity, or actual bank payout is claimed. A configured anchor must be tested end-to-end before real cash-out is enabled operationally. No live provider is configured in this repository.
 
-Further deployment controls: authenticated-route rate limits, durable hosted storage and encrypted backups, encrypted anchor-token storage at rest, verifier key rotation policy, detailed audit/incident response, contract TTL monitoring/restoration, external-payment indexing, and provider-specific reconciliation for ambiguous network timeouts. SQLite targets one process/server; it is not a horizontally scaled persistence design.
+Further deployment controls: authenticated-route rate limits, durable hosted storage and encrypted backups, encrypted anchor-token storage at rest, verifier key rotation policy, detailed audit/incident response, contract TTL monitoring/restoration, external-payment indexing, and provider-specific reconciliation for ambiguous network timeouts. MongoDB requires authentication, restricted network access and protected backups on hosted deployments.
 
 User authorization cannot be recovered after loss of wallet access. The MVP supports primary-key classic wallets, not arbitrary multisig, contract wallets, muxed payment recipients, or fee-bump payment envelopes.
+
+## SDF reference-anchor integration — 2026-10-04
+
+The Testnet reference provider is configured through environment variables. Real protocol calls and wallet-approved Testnet funding are distinct from its simulated fiat side; the simulation label is persisted with withdrawal metadata and survives discovery failures. Mainnet rejects `ANCHOR_SIMULATED_FIAT=true`.
+
+Published asset metadata is checked against the configured issuer, withdrawal bounds are enforced with exact decimal units, and provider-reported payout asset mismatches are rejected. Funding confirmation requires the successful actual ledger envelope to match the reviewed network-bound transaction hash. Private notes remain off-chain. The confirmation check is authenticated, account/network-scoped, and never signs or resubmits a transfer.
+
+SEP-10 still requires the user's wallet signature; no client-domain requirement was added. Challenge-only live diagnostics generated a public account without retaining or logging its private key. No user signing was automated and no funds were sent. Public audit evidence contains no JWT or interactive authorization URL. `.env.local` remains ignored, mode 0600, and no credentials/local test data were staged or committed. Source and the final browser bundle were scanned for private-key literals and actual configured server-secret values without printing those values.
+
+An uncertain initiation response retains its idempotent reservation; absent session IDs need explicit provider reconciliation. Expired SEP-10 tokens for an existing session still require manual reconciliation/reauthentication rather than silent replacement or a new duplicate withdrawal. Actual Freighter, hosted form, funding and completion rehearsals remain outstanding.

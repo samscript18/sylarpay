@@ -1,0 +1,45 @@
+{
+  "checkedAt": "2026-10-04T14:00:31.461Z",
+  "home": "testanchor.stellar.org",
+  "network": "testnet",
+  "sep24": "https://testanchor.stellar.org/sep24",
+  "sep10": "https://testanchor.stellar.org/auth",
+  "sep38": "https://testanchor.stellar.org/sep38",
+  "name": "SDF Test Anchor",
+  "demo": false,
+  "available": true,
+  "currencies": [
+    "USD"
+  ],
+  "assetCode": "USDC",
+  "authentication": true,
+  "minAmount": "1",
+  "maxAmount": "10",
+  "simulatedFiat": true,
+  "account": "GCMLFMQSSL3XSNR3HYAERWSRRICDTGHZRUWFCTW4SLYWMY4HQ6LB732I",
+  "serverSignedChallengeValidated": true,
+  "challengeOperationCount": 2,
+  "userAuthenticated": false,
+  "sessionInitiated": false,
+  "fundingTransaction": null,
+  "providerCompletion": false,
+  "boundary": "Awaiting manual Freighter signature of SEP-10 challenge; no wallet signing automated.",
+  "simulated": "Fiat conversion and payout",
+  "unsupportedFiat": [
+    "NGN"
+  ],
+  "assetIssuer": "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+  "clientDomainRequired": false,
+  "note": "Only discovery and server challenge validation were exercised live. No JWT, interactive URL, withdrawal, wallet signature or funding transaction was obtained.",
+  "productionApiDiscoveryVerified": true,
+  "productionApiDiscoveryResult": {
+    "available": true,
+    "currencies": [
+      "USD"
+    ],
+    "minAmount": "1",
+    "maxAmount": "10",
+    "demo": false,
+    "simulatedFiat": true
+  }
+}
