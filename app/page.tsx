@@ -1,12 +1,13 @@
 import { TestnetDisclosure } from "@/components/testnet-disclosure";
 import Link from "next/link";
-import { ArrowUpRight, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { AuroraHeroBackground } from "@/components/landing/aurora-hero-background";
 import { InteractiveHeroCard } from "@/components/landing/interactive-hero-card";
 import { StatsTicker } from "@/components/landing/stats-ticker";
 import { BentoFeatures } from "@/components/landing/bento-features";
 import { InteractivePlayground } from "@/components/landing/interactive-playground";
 import { HowItWorks } from "@/components/landing/how-it-works";
+import { TestnetProof } from "@/components/landing/testnet-proof";
 import { FinalCta } from "@/components/landing/final-cta";
 
 export default function Home() {
@@ -39,11 +40,10 @@ export default function Home() {
 
           {/* Subtitle */}
           <p className="animate-[fadeInUp_0.8s_ease-out_0.2s_both] mx-auto mb-10 max-w-2xl text-base sm:text-lg md:text-xl font-light text-neutral-400 tracking-tight leading-relaxed">
-            Turn your Stellar account into a simple human-readable payment identity.
-            Receive USDC through a link or QR code — then cash out in supported local currencies
-            through a compatible anchor.
+            Your Stellar wallet, without the 56-character address.
           </p>
 
+          <p className="mb-8 text-sm text-emerald-200">@username → USDC → Local cash-out</p>
           {/* Primary Action Buttons */}
           <div className="animate-[fadeInUp_0.8s_ease-out_0.3s_both] flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <Link
@@ -58,17 +58,17 @@ export default function Home() {
             </Link>
 
             <a
-              href="#how"
+              href="#payment-flow"
               className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-medium text-neutral-300 transition-all hover:bg-white/10 hover:text-white"
             >
-              <span>See how it works</span>
+              <span>Watch the payment flow</span>
               <ArrowRight size={15} className="text-neutral-400 transition-transform group-hover:translate-x-0.5" />
             </a>
           </div>
 
           {/* 3D Moving Showcase Card on Hover */}
           <div className="animate-[fadeInUp_0.8s_ease-out_0.4s_both]">
-            <InteractiveHeroCard />
+            <InteractiveHeroCard appUrl={process.env.NEXT_PUBLIC_APP_URL || "https://sylarpay.onrender.com"} />
           </div>
 
           {/* 4-Column Live Metric Stats Ticker */}
@@ -77,22 +77,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 12-COLUMN BENTO GRID */}
-        <BentoFeatures />
-
-        {/* INTERACTIVE PLAYGROUND / SANDBOX */}
-        <InteractivePlayground />
-
-        <section aria-label="Existing Testnet settlement proof" className="mx-auto mt-12 max-w-3xl rounded-2xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-lg font-medium">Existing Testnet proof</h2>
-          <p className="mt-2 text-sm text-neutral-400">Inspect the deployed username registry and an earlier verified 150 USDC payment. These are historical Testnet records, not a sandbox payment or fiat payout.</p>
-          <div className="mt-4 flex flex-wrap gap-4 text-sm text-emerald-300">
-            <a href="https://stellar.expert/explorer/testnet/contract/CCMWUH5LKJNXW4SGGDAKBVSTECBYQZK4G64ENCVBOULWPQGJRIZFAMFH" target="_blank" rel="noopener noreferrer">View UsernameRegistry ↗</a>
-            <a href="https://stellar.expert/explorer/testnet/tx/19862afc3130ae51fc976a5ada12306371c6473b69d7edf0bcecdc7fbc787dbf" target="_blank" rel="noopener noreferrer">View verified 150 USDC transaction ↗</a>
-          </div>
-        </section>
-        {/* FOUR STEPS SECTION */}
         <HowItWorks />
+        <InteractivePlayground />
+        <TestnetProof />
+        <BentoFeatures />
+        <section aria-label="Planned business model" className="mx-auto mt-12 max-w-5xl rounded-2xl border border-white/10 p-6">
+          <h2 className="text-lg font-medium">Free to receive. Built for businesses.</h2>
+          <p className="mt-2 text-sm leading-relaxed text-neutral-400">SylarPay currently charges no app processing fee; Stellar network fees still apply. The planned business model is paid merchant tools and compatible anchor partnerships. These are future revenue options, not live products or agreements.</p>
+        </section>
 
         {/* FINAL CLOSING CTA */}
         <FinalCta />

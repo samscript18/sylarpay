@@ -14,16 +14,16 @@ export function HowItWorks() {
 		{
 			num: "02",
 			title: "Share your payment link",
-			description: "Send your custom link (sylarpay.app/@you) or let clients scan your high-contrast QR code. No long public keys.",
+			description: "Share your payment link or QR code. Your client opens your profile and reviews who they are paying.",
 			icon: Share2,
 			tag: "Universal URL",
 		},
 		{
 			num: "03",
 			title: "Get paid in USDC",
-			description: "Payments settle directly between Stellar accounts in under 2 seconds. Transactions are publicly verifiable on-chain.",
+			description: "Your client reviews the amount and destination, approves in Freighter, and sees confirmation only after Stellar ledger verification.",
 			icon: DollarSign,
-			tag: "Instant Settlement",
+			tag: "Verified Settlement",
 		},
 		{
 			num: "04",
@@ -35,14 +35,14 @@ export function HowItWorks() {
 	];
 
 	return (
-		<section id="how" className="mt-32 max-w-7xl mx-auto px-4 scroll-mt-28">
+		<section id="payment-flow" className="mt-32 max-w-7xl mx-auto px-4 scroll-mt-28">
 			<div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
 				<div>
 					<div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-950/20 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-emerald-300">
 						Four Steps · One Identity
 					</div>
-					<h2 className="text-3xl md:text-5xl font-medium tracking-tight text-white mb-2">How SylarPay Works</h2>
-					<p className="text-neutral-400 text-sm md:text-base max-w-lg font-normal">Designed to bridge the gap between global digital dollars and local bank accounts.</p>
+					<h2 className="text-3xl md:text-5xl font-medium tracking-tight text-white mb-2">One name. One payment.</h2>
+					<p className="text-neutral-400 text-sm md:text-base max-w-lg font-normal">A client pays a designer using @sam. Wallet approval and verifiable settlement make the transfer explicit.</p>
 				</div>
 
 				<Link href="/claim" className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-medium text-white transition-all hover:bg-white/10">

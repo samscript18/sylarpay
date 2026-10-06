@@ -41,7 +41,7 @@ export function InteractivePlayground() {
 				<div className="relative z-10 flex flex-col items-center text-center mb-8">
 					<div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3 py-1 text-[10px] font-sans uppercase tracking-wider text-emerald-300">
 						<Sparkles size={12} className="text-emerald-400" />
-						Interactive Testnet Sandbox
+						DEMO • No wallet transaction
 					</div>
 					<h2 className="text-3xl md:text-4xl font-medium tracking-tight text-white mb-2">Look up a @username. Preview a payment.</h2>
 					<p className="text-sm text-neutral-400 max-w-lg font-normal">Look up a registered username without a wallet. The payment preview is illustrative: no transaction is signed or submitted. Freighter is required to send USDC or start cash-out.</p>
@@ -114,7 +114,7 @@ export function InteractivePlayground() {
 								executed ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-white text-black hover:bg-neutral-200"
 							}`}
 						>
-							{executed ? "Preview shown" : `Preview $${testAmount} USDC payment`}
+							{executed ? "Simulation shown" : `Simulate payment`}
 						</button>
 					</div>
 
@@ -124,7 +124,7 @@ export function InteractivePlayground() {
 								<Check size={14} className="text-emerald-400" />
 								Illustrative payment preview — no funds sent
 							</div>
-							<p className="text-neutral-300">A real payment requires review, Freighter signing, and Stellar ledger verification.</p>
+							<p className="text-neutral-300">Preview amount: {testAmount} USDC. A real payment requires review, Freighter signing, and Stellar ledger verification.</p>
 							<Link href={`/@${testUser}`} className="inline-block pt-2 underline">Open payment profile ↗</Link>
 						</div>
 					)}

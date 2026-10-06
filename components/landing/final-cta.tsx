@@ -29,7 +29,7 @@ export function FinalCta() {
           </h2>
 
           <p className="text-sm md:text-base text-neutral-400 mb-8 font-normal max-w-lg mx-auto">
-            Say goodbye to 56-character addresses. Get your verified Stellar payment link in 30 seconds.
+            People understand usernames. Share yours, receive USDC, and verify the payment on Stellar.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
