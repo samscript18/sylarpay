@@ -819,3 +819,82 @@ summary:hover {
 .multi-send-review .account { margin-top: 10px; }
 
 .workspace.receipt-workspace { max-width: 640px; }
+
+/* Stationary disclosure with a decorative, seamless marquee. */
+.testnet-notice {
+  position: relative;
+  min-width: 0;
+  margin-bottom: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 18px;
+  background: #101513;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+  text-align: left;
+}
+.testnet-notice-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.055);
+}
+.testnet-notice-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  color: #b8e1cd;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.testnet-notice-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  color: #929b97;
+  font-size: 10px;
+}
+.testnet-notice-marquee {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+.testnet-notice-track {
+  display: flex;
+  width: max-content;
+  animation: testnet-marquee 38s linear infinite;
+}
+.testnet-notice-group {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding-right: 28px;
+  flex-shrink: 0;
+}
+.testnet-notice-group span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+  color: #9fa9a4;
+  font-size: 11px;
+}
+.testnet-notice-group i { width: 3px; height: 3px; border-radius: 50%; background: #5a7165; }
+.testnet-notice-copy { padding: 13px 18px 15px; }
+.testnet-notice-copy p { margin: 0; color: #d0d7d3; font-size: 12px; line-height: 1.7; }
+.testnet-notice-copy p + p { margin-top: 4px; color: #959f99; font-size: 11px; }
+.testnet-notice:hover .testnet-notice-track { animation-play-state: paused; }
+@keyframes testnet-marquee { to { transform: translateX(-50%); } }
+@media (max-width: 640px) {
+  .testnet-notice-header { gap: 12px; padding: 11px 14px; }
+  .testnet-notice-tag { display: none; }
+  .testnet-notice-copy { padding: 12px 14px 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .testnet-notice-track { animation: none; }
+}
