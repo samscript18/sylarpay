@@ -14,3 +14,5 @@ contracts/**/test_snapshots/
 /scripts/
 
 /tests/
+
+/AGENTS.md
