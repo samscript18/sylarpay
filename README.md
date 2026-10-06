@@ -16,6 +16,21 @@ SylarPay turns a Stellar account into **@username**. Claim → Share → Get pai
 
 [Try SylarPay](https://sylarpay.onrender.com/) · [Open @sam](https://sylarpay.onrender.com/@sam) · [2-minute demo script](docs/DEMO.md) · [View Soroban contract](https://stellar.expert/explorer/testnet/contract/CCMWUH5LKJNXW4SGGDAKBVSTECBYQZK4G64ENCVBOULWPQGJRIZFAMFH) · [View verified 150 USDC transaction](https://stellar.expert/explorer/testnet/tx/19862afc3130ae51fc976a5ada12306371c6473b69d7edf0bcecdc7fbc787dbf)
 
+## Watch the demo
+
+**2:40 · SylarPay on Stellar Testnet**
+
+See @sam, QR payment links, the recorded 150 USDC settlement, Explorer proof and anchor-powered cash-out. Fiat payout is simulated; no NGN bank payout is live.
+
+*Demo video upload pending.*
+
+<!-- In GitHub's README editor, replace the line above by dragging in
+the exported sylarpay-hackathon-demo.mp4. Wait for the upload to finish and leave
+the generated GitHub attachment URL on its own line so the video player renders.
+Preview the README before committing. Do not commit the generated MP4 to Git. -->
+
+[Demo script](docs/DEMO.md)
+
 ## What is real? What is simulated?
 
 **Stellar Testnet only. Test assets have no monetary value. No NGN rail or production bank payout is live.**
@@ -37,7 +52,7 @@ The known payment and identity were recorded on 2026-10-04. @sam is an **existin
 
 Open the landing page → resolve @sam without a wallet → open the public profile → connect the sender's Freighter Testnet wallet → review and approve 150 USDC → wait for backend ledger verification → show the recipient's balance/history and actual explorer transaction. For cash-out, demonstrate SDF's hosted USD reference flow separately with **2 USDC**, within its 1–10 USDC range. Never narrate a pending withdrawal as complete.
 
-Follow [the exact 2–3 minute script and manual rehearsal](docs/DEMO.md). No recorded demo video is linked yet; the script does not substitute for real Freighter approval footage.
+Follow [the exact 2–3 minute script and manual rehearsal](docs/DEMO.md). A recorded demonstration does not replace manual Freighter approval rehearsal.
 
 ## Planned business model
 

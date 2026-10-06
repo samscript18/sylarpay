@@ -22,9 +22,9 @@ Create a **Web Service** (not a Static Site):
 | Root directory | Repository root |
 | Build | `npm ci --include=dev && npm run build` |
 | Start | `npm run start -- --hostname 0.0.0.0 --port $PORT` |
-| Health check | `/api/config` |
+| Health check | `/api/health` |
 
-Add MONGODB_URI, VERIFIER_SECRET, USERNAME_REGISTRY_CONTRACT_ID and NEXT_PUBLIC_APP_URL in the service Environment settings. Leave VERIFIER_SECRET empty if app-issued verification is intentionally unavailable. Select a service plan in Render; no paid deployment was initiated by this configuration task. The health endpoint validates app configuration; separately verify database-backed wallet activity after deployment.
+Add MONGODB_URI, VERIFIER_SECRET, USERNAME_REGISTRY_CONTRACT_ID and NEXT_PUBLIC_APP_URL in the service Environment settings. Leave VERIFIER_SECRET empty if app-issued verification is intentionally unavailable. Select a service plan in Render; no paid deployment was initiated by this configuration task. `GET /api/health` is a public, uncached process-liveness endpoint returning HTTP 200 with `{"status":"ok","service":"sylarpay"}`. It does not check MongoDB, Stellar or the anchor; separately check `/api/config` and database-backed wallet activity after deployment.
 
 ## Environment settings for both hosts
 
