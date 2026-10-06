@@ -153,3 +153,9 @@ If a saved withdrawal reports a different payout currency from the requested one
 ### Wallet-free first impression
 
 Open the landing page and point out the persistent Testnet disclosure. Use the sandbox's **Resolve** button for an actual public username lookup; no wallet is needed. **Preview payment** is illustrative and sends no funds. For settlement proof, use the direct **View UsernameRegistry** and **View verified 150 USDC transaction** links: these are existing Testnet evidence, not transactions created by the preview. Open the payment profile and connect Freighter only when continuing to a real payment. Cash-out initiation also requires Freighter authentication/approval and the anchor's hosted interaction; it cannot be completed by a visitor without a Stellar wallet. The configured reference demo uses USD and simulates fiat payout; no NGN rail or bank transfer is live.
+
+### Homepage-first judge walkthrough — 2026-10-06
+
+Use the hosted Render origin shown by the app, not an undeployed custom-domain example. The hero’s 150 USDC card is explicitly **historical Testnet evidence**, with the recorded date and a direct explorer link. **Watch the payment flow** scrolls to the four-step explanation; it is not a recorded video. The real-vs-simulated proof details identify the deployed contract, recorded owner and exact payment hash. **Simulate payment** in the wallet-free sandbox is only an illustrative preview; it does not sign, submit, confirm or update any account balance.
+
+For the live payment scene, open the actual @sam profile and complete the existing manual Freighter sequence above. Do not narrate the historical hero card or sandbox as a fresh transfer. A recorded demo video still needs authentic manual wallet/anchor footage; no synthetic approval or bank-payout footage has been produced.

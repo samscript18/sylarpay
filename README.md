@@ -2,9 +2,48 @@
 
 **Get paid globally. Pay locally. Just use @username.**
 
-SylarPay is a noncustodial consumer payment layer on Stellar. A Soroban contract turns an account into a human-readable payment identity. Share a link or QR, receive USDC directly in your wallet, verify settlement on Stellar, and request cash-out through a compatible anchor.
+## The problem
 
-The blockchain handles settlement. SylarPay handles the experience.
+A 56-character Stellar address works for the network, but it is a poor payment identity for an invoice, a bio or a WhatsApp message.
+
+## The solution
+
+SylarPay turns a Stellar account into **@username**. Claim → Share → Get paid in USDC → Verify on Stellar → Request cash-out through a compatible anchor. Funds move between user wallets; SylarPay does not custody them.
+
+**The blockchain handles settlement. SylarPay handles the experience.**
+
+[Try SylarPay](https://sylarpay.onrender.com/) · [Open @sam](https://sylarpay.onrender.com/@sam) · [2-minute demo script](docs/DEMO.md) · [View Soroban contract](https://stellar.expert/explorer/testnet/contract/CCMWUH5LKJNXW4SGGDAKBVSTECBYQZK4G64ENCVBOULWPQGJRIZFAMFH) · [View verified 150 USDC transaction](https://stellar.expert/explorer/testnet/tx/19862afc3130ae51fc976a5ada12306371c6473b69d7edf0bcecdc7fbc787dbf)
+
+## What is real? What is simulated?
+
+**Stellar Testnet only. Test assets have no monetary value. No NGN rail or production bank payout is live.**
+
+| Capability | Current status |
+| --- | --- |
+| Soroban registration, ownership, transfer and resolution | Implemented; deployed Testnet registry and seeded @sam recorded in public evidence |
+| Freighter signing | Implemented; extension approvals require manual rehearsal on the presentation machine |
+| USDC payments and ledger verification | Real Testnet 150 USDC payment recorded and reverified; no sandbox payment is claimed |
+| Public payment profile and QR | Implemented; public profile viewing and sandbox lookup require no wallet |
+| Account balance, history and private notes | Horizon balance plus indexed verified payments; account-private notes remain off-chain |
+| SEP-10 / SEP-24 integration | Adapter implemented; discovery and server challenge verified; full withdrawal rehearsal remains manual |
+| Reference-anchor fiat payout | USD simulation by SDF Test Anchor; no real fiat or bank payout |
+| NGN payout | Production provider supporting NGN and the desired payout rail required |
+
+The known payment and identity were recorded on 2026-10-04. @sam is an **existing seeded identity**, not a fresh claim during the demo. Testnet resets can invalidate accounts, contracts and proof. Check current availability before presenting. The wallet-free sandbox performs real username lookup; its explicitly labeled payment simulation creates no transaction or hash.
+
+## Judge demo
+
+Open the landing page → resolve @sam without a wallet → open the public profile → connect the sender's Freighter Testnet wallet → review and approve 150 USDC → wait for backend ledger verification → show the recipient's balance/history and actual explorer transaction. For cash-out, demonstrate SDF's hosted USD reference flow separately with **2 USDC**, within its 1–10 USDC range. Never narrate a pending withdrawal as complete.
+
+Follow [the exact 2–3 minute script and manual rehearsal](docs/DEMO.md). No recorded demo video is linked yet; the script does not substitute for real Freighter approval footage.
+
+## Planned business model
+
+Receiving currently has no SylarPay processing fee; Stellar network fees and provider fees can still apply. Potential revenue comes from paid business payment/invoice tools, merchant pages, and compatible anchor partnerships. These are planned options, not implemented products, signed partnerships or current revenue.
+
+## Engineering evidence
+
+Public records: [deployment](docs/DEPLOYMENT.json), [signed payment](docs/LIVE-TEST.json), [read-only Testnet audit](docs/AUDIT-TESTNET.json), and [anchor boundary audit](docs/SDF-ANCHOR-AUDIT.json). [Readiness](docs/READINESS.md) distinguishes historical validation from the latest focused checks and outstanding manual rehearsal. Do not treat previous test counts as a current full-suite result.
 
 ## Implemented architecture
 
