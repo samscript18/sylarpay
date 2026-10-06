@@ -149,3 +149,7 @@ Refreshing SEP-10 access does **not** mint a replacement interactive token. If p
 ### Payout currency mismatch
 
 If a saved withdrawal reports a different payout currency from the requested one, do not fund it. Open the partner’s transaction details and reconcile or cancel that session with the partner. Restart the app after changing anchor environment configuration. New reference-anchor requests must select USD; enabling simulated fiat does not enable NGN. Existing withdrawal records are not silently relabeled or marked cancelled.
+
+### Wallet-free first impression
+
+Open the landing page and point out the persistent Testnet disclosure. Use the sandbox's **Resolve** button for an actual public username lookup; no wallet is needed. **Preview payment** is illustrative and sends no funds. For settlement proof, use the direct **View UsernameRegistry** and **View verified 150 USDC transaction** links: these are existing Testnet evidence, not transactions created by the preview. Open the payment profile and connect Freighter only when continuing to a real payment. Cash-out initiation also requires Freighter authentication/approval and the anchor's hosted interaction; it cannot be completed by a visitor without a Stellar wallet. The configured reference demo uses USD and simulates fiat payout; no NGN rail or bank transfer is live.

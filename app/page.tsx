@@ -1,3 +1,4 @@
+import { TestnetDisclosure } from "@/components/testnet-disclosure";
 import Link from "next/link";
 import { ArrowUpRight, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 import { AuroraHeroBackground } from "@/components/landing/aurora-hero-background";
@@ -15,6 +16,7 @@ export default function Home() {
       <AuroraHeroBackground />
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <TestnetDisclosure network={process.env.STELLAR_NETWORK === "mainnet" ? "mainnet" : "testnet"} />
         {/* HERO SECTION */}
         <section className="mx-auto max-w-5xl text-center pt-4 md:pt-10">
           {/* Eyebrow Badge */}
@@ -81,6 +83,14 @@ export default function Home() {
         {/* INTERACTIVE PLAYGROUND / SANDBOX */}
         <InteractivePlayground />
 
+        <section aria-label="Existing Testnet settlement proof" className="mx-auto mt-12 max-w-3xl rounded-2xl border border-white/10 bg-white/5 p-6">
+          <h2 className="text-lg font-medium">Existing Testnet proof</h2>
+          <p className="mt-2 text-sm text-neutral-400">Inspect the deployed username registry and an earlier verified 150 USDC payment. These are historical Testnet records, not a sandbox payment or fiat payout.</p>
+          <div className="mt-4 flex flex-wrap gap-4 text-sm text-emerald-300">
+            <a href="https://stellar.expert/explorer/testnet/contract/CCMWUH5LKJNXW4SGGDAKBVSTECBYQZK4G64ENCVBOULWPQGJRIZFAMFH" target="_blank" rel="noopener noreferrer">View UsernameRegistry ↗</a>
+            <a href="https://stellar.expert/explorer/testnet/tx/19862afc3130ae51fc976a5ada12306371c6473b69d7edf0bcecdc7fbc787dbf" target="_blank" rel="noopener noreferrer">View verified 150 USDC transaction ↗</a>
+          </div>
+        </section>
         {/* FOUR STEPS SECTION */}
         <HowItWorks />
 

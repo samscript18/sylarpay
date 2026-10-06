@@ -1,4 +1,5 @@
 "use client";
+import { TestnetDisclosure } from "./testnet-disclosure";
 import { FormSkeleton, LoadingStatus, Skeleton } from "./skeleton";
 import { FundWithdrawal } from "./fund-withdrawal";
 import { WithdrawalNextStep } from "./withdrawal-next-step";
@@ -123,6 +124,7 @@ function CashOutSession() {
 	}
 	return (
 		<main className="workspace max-w-xl mx-auto px-4 py-8">
+      <TestnetDisclosure network={w.config?.network} />
 			<div className="page-heading narrow text-center mb-8">
 				<span className="eyebrow inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3 tracking-wide uppercase">
 					Your work. Your local currency.

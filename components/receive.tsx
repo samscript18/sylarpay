@@ -1,4 +1,5 @@
 "use client";
+import { TestnetDisclosure } from "./testnet-disclosure";
 import Link from "next/link";
 import { ProfileSkeleton } from "./skeleton";
 import { useWallet, ConnectPrompt } from "./wallet-provider";
@@ -12,6 +13,7 @@ export function Receive() {
 
   return (
     <main className="workspace">
+      <TestnetDisclosure network={w.config?.network} />
       <div className="page-heading narrow">
         <span className="eyebrow">From anywhere. To you.</span>
         <h1>Receive USDC</h1>

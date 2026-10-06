@@ -1,45 +1,29 @@
 "use client";
 import React, { useState } from "react";
-import { Tilt3D } from "./tilt-3d";
-import { Sparkles, ArrowRight, Check, ShieldCheck, RefreshCw, Search, Zap } from "lucide-react";
+import { api } from "@/lib/api";
+import type { Recipient } from "@/lib/payment-client";
+import Link from "next/link";
+import { Sparkles, Check } from "lucide-react";
 
 export function InteractivePlayground() {
 	const [testUser, setTestUser] = useState("sam");
 	const [testAmount, setTestAmount] = useState("100.00");
 	const [isResolving, setIsResolving] = useState(false);
-	const [resolved, setResolved] = useState<{
-		address: string;
-		verified: boolean;
-		txHash?: string;
-	}>({
-		address: "GD7X3K6M9QXWLP57X7Y4Z9910BCN28AL09PL3M",
-		verified: true,
-	});
-	const [isExecuting, setIsExecuting] = useState(false);
+	const [resolved, setResolved] = useState<Recipient | null>(null);
+	const [error, setError] = useState("");
 	const [executed, setExecuted] = useState(false);
-
-	const handleResolve = () => {
+	const handleResolve = async () => {
 		setIsResolving(true);
+		setResolved(null);
 		setExecuted(false);
-		setTimeout(() => {
+		setError("");
+		try {
+			setResolved(await api<Recipient>(`/api/users/${encodeURIComponent(testUser)}`));
+		} catch (error) {
+			setError(error instanceof Error ? error.message : "Username lookup failed. Try again.");
+		} finally {
 			setIsResolving(false);
-			setResolved({
-				address: `G${testUser.toUpperCase().padEnd(6, "X")}9QXWLP57X7Y4Z9910BCN28AL09PL3M`,
-				verified: testUser.length >= 3,
-			});
-		}, 600);
-	};
-
-	const handleExecute = () => {
-		setIsExecuting(true);
-		setTimeout(() => {
-			setIsExecuting(false);
-			setExecuted(true);
-			setResolved((prev) => ({
-				...prev,
-				txHash: `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`,
-			}));
-		}, 1100);
+		}
 	};
 
 	return (
@@ -59,8 +43,8 @@ export function InteractivePlayground() {
 						<Sparkles size={12} className="text-emerald-400" />
 						Interactive Testnet Sandbox
 					</div>
-					<h2 className="text-3xl md:text-4xl font-medium tracking-tight text-white mb-2">Try resolving and paying any @username</h2>
-					<p className="text-sm text-neutral-400 max-w-lg font-normal">Test the live address resolution and mock transaction lifecycle without connecting a real wallet.</p>
+					<h2 className="text-3xl md:text-4xl font-medium tracking-tight text-white mb-2">Look up a @username. Preview a payment.</h2>
+					<p className="text-sm text-neutral-400 max-w-lg font-normal">Look up a registered username without a wallet. The payment preview is illustrative: no transaction is signed or submitted. Freighter is required to send USDC or start cash-out.</p>
 				</div>
 
 				{/* Interactive Controls */}
@@ -72,7 +56,8 @@ export function InteractivePlayground() {
 							<input
 								type="text"
 								value={testUser}
-								onChange={(e) => setTestUser(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
+                                disabled={isResolving}
+								onChange={(e) => { setTestUser(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "")); setResolved(null); setExecuted(false); setError(""); }}
 								placeholder="sam"
 								className="w-full rounded-xl border border-white/10 bg-black/60 pl-8 pr-24 py-3 font-sans text-sm text-white focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
 							/>
@@ -103,32 +88,33 @@ export function InteractivePlayground() {
 					</div>
 				</div>
 
+				{error && <p role="alert" className="relative z-10 mb-4 text-sm text-amber-200">{error}</p>}
 				{/* Resolution Result Card */}
 				<div className="relative z-10 max-w-3xl mx-auto rounded-2xl border border-white/10 bg-black/50 p-5 md:p-6 text-left">
 					<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-4 mb-4">
 						<div>
 							<div className="text-sm font-semibold text-white flex items-center gap-2">
 								<span>@{testUser || "username"}</span>
-								{resolved.verified && (
+								{resolved?.verified && (
 									<span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-950/30 px-2 py-0.5 text-[10px] font-sans text-emerald-300">
 										<Check size={11} /> Sylar Verified
 									</span>
 								)}
 							</div>
 							<div className="text-[11px] font-sans text-neutral-400 mt-1 truncate">
-								Resolved Stellar Account: <span className="text-white">{resolved.address}</span>
+								Stellar account: <span className="text-white">{resolved?.address || "Choose Resolve to look up this username"}</span>
 							</div>
 						</div>
 
 						<button
 							type="button"
-							onClick={handleExecute}
-							disabled={isExecuting || executed}
+							onClick={() => setExecuted(true)}
+							disabled={!resolved || isResolving || executed}
 							className={`rounded-full px-5 py-2.5 text-xs font-semibold transition-all ${
 								executed ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-white text-black hover:bg-neutral-200"
 							}`}
 						>
-							{isExecuting ? "Simulating settlement…" : executed ? "✓ Settled on Stellar" : `Send $${testAmount} USDC`}
+							{executed ? "Preview shown" : `Preview $${testAmount} USDC payment`}
 						</button>
 					</div>
 
@@ -136,10 +122,10 @@ export function InteractivePlayground() {
 						<div className="rounded-xl border border-emerald-500/30 bg-emerald-950/30 p-3.5 font-sans text-xs text-emerald-300 space-y-1 animate-[fadeInUp_0.4s_ease-out]">
 							<div className="flex items-center gap-2 font-bold text-white">
 								<Check size={14} className="text-emerald-400" />
-								Ledger Transaction Confirmed (SCP Finality)
+								Illustrative payment preview — no funds sent
 							</div>
-							<div className="text-[11px] text-neutral-400 truncate">Tx Hash: {resolved.txHash}</div>
-							<div className="text-[10px] text-neutral-500">Network: Stellar Testnet · Time: 1.62s · Fee: 0.00001 XLM</div>
+							<p className="text-neutral-300">A real payment requires review, Freighter signing, and Stellar ledger verification.</p>
+							<Link href={`/@${testUser}`} className="inline-block pt-2 underline">Open payment profile ↗</Link>
 						</div>
 					)}
 				</div>

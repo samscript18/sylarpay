@@ -211,3 +211,11 @@ Seven new origin tests pass. The complete local suite reports 163 passing and tw
 ## Homepage cash-out wording — 2026-10-06
 
 Removed the hard-coded 1,590 NGN/USDC calculator and estimated NGN payout. The cash-out card, hero badge, ticker and how-it-works copy now describe supported local currencies as provider-dependent. NGN availability depends on the configured anchor, and the reference demonstration is explicitly USD with simulated fiat payout and no NGN support. A rendered-homepage regression test passes; the production homepage output was checked for the removed claims. Lint reports no errors (existing unused-import warnings remain), and the production build passes. The test remains local under the requested tests exclusion.
+
+## Visible Testnet disclosure — 2026-10-06
+
+Landing, Receive, public payment profiles and Cash Out now show a non-dismissible Testnet notice: USDC settlement uses actual Stellar Testnet transactions, test assets have no monetary value, fiat payout is simulated, and no NGN rail is live. Freighter approval remains required for actual payments and withdrawal initiation; the public landing sandbox needs no wallet.
+
+The sandbox now calls the existing public username lookup API instead of manufacturing an address. Its payment preview explicitly sends no funds and produces no fabricated transaction hash or ledger-confirmation claim. Direct explorer links identify the existing deployed registry and earlier 150 USDC payment as historical Testnet proof, not a new sandbox transaction or fiat payout. The previous fabricated NGN estimate remains removed.
+
+Validation for this change: four focused landing/disclosure/lookup tests pass, typecheck passes, targeted lint has no errors, and the production build passes. Tests remain local under the existing scripts/tests commit exclusion. The hosted Render deployment has not been verified after these edits.

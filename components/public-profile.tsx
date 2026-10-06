@@ -1,4 +1,5 @@
 "use client";
+import { TestnetDisclosure } from "./testnet-disclosure";
 import Link from "next/link";
 import { ProfileSkeleton, LoadingStatus } from "./skeleton";
 import { useState } from "react";
@@ -20,6 +21,7 @@ export function PublicProfile({ username, amount }: { username: string; amount?:
 		error = query.error?.message;
 	return (
 		<main className="workspace max-w-xl mx-auto px-4 py-8">
+      <TestnetDisclosure network={w.config?.network} />
 			{error ? (
 				<div className="empty-state text-center p-8 rounded-3xl bg-[#070b09]/80 border border-white/10 backdrop-blur-xl">
 					<h1 className="text-2xl font-bold text-white mb-2">Profile unavailable</h1>
