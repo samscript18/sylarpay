@@ -30,7 +30,7 @@ function CashOutSession() {
 	});
 	const info = anchorQuery.data;
 	const idem = useRef("");
-	const currency = selectedCurrency || info?.currencies[0] || "NGN";
+	const currency = selectedCurrency || info?.currencies[0] || "";
 	useEffect(() => {
 		if (!w.account) return;
 		const id = sessionStorage.getItem(`sylar_withdrawal_${w.account}_${w.config?.network}`) || sessionStorage.getItem(`skylar_withdrawal_${w.account}_${w.config?.network}`);
@@ -140,7 +140,8 @@ function CashOutSession() {
 
 					{simulatedFiat && (
 						<div role="note" className="mb-6 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
-							<strong className="block mb-1">{info?.name || session?.provider} — simulated fiat payout</strong>
+							<span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider">DEMO · Simulated fiat payout</span>
+                            <strong className="block mb-1">{info?.name || session?.provider} — simulated fiat payout</strong>
 							{session?.currency || currency} Testnet withdrawal. Funding uses a real Stellar Testnet USDC transfer; fiat conversion and payout are simulated. No bank payout occurs.
 						</div>
 					)}
@@ -292,20 +293,10 @@ function CashOutSession() {
 									}}
 									className="w-full bg-[#0a0f0d] border border-white/10 rounded-2xl px-4 py-3.5 text-white focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all text-sm"
 								>
-									{/* <option value="NGN" disabled={!info.currencies.includes("NGN")}>
-										NGN
-										{info.currencies.includes("NGN") ? "" : " — unavailable"}
-									</option> */}
-									{info.currencies
-										.filter((v) => v !== "NGN")
-										.map((v) => (
-											<option key={v}>{v}</option>
-										))}
+                                    {info.currencies.map(v => <option key={v} value={v}>{v}</option>)}
 								</select>
 							</div>
-							{/* {!info.currencies.includes("NGN") && (
-								<div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">NGN cash out is currently unavailable with this provider.</div>
-							)} */}
+                            {!info.currencies.includes("NGN") && <p className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-relaxed text-zinc-400">NGN cash out is currently unavailable with this provider.</p>}
 							<div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 text-xs text-zinc-400 leading-relaxed">
 								Rates, fees, and payout estimates will be shown by the anchor in its hosted experience. A withdrawal request does not mean fiat has been received.
 							</div>

@@ -28,7 +28,7 @@ Final audit on 2026-10-04: zero runtime dependency vulnerabilities reported by `
 
 ## Production work deliberately not claimed
 
-No production audit, custody service, government KYC, privacy for Stellar settlement, guaranteed payout rail/liquidity, or actual bank payout is claimed. A configured anchor must be tested end-to-end before real cash-out is enabled operationally. No live provider is configured in this repository.
+No production audit, custody service, government KYC, privacy for Stellar settlement, guaranteed payout rail/liquidity, or actual bank payout is claimed. A configured anchor must be tested end-to-end before real cash-out is enabled operationally. SDF’s public Testnet reference anchor is configured; its fiat payout is simulated. No production fiat provider or NGN payout rail is configured.
 
 Further deployment controls: authenticated-route rate limits, durable hosted storage and encrypted backups, encrypted anchor-token storage at rest, verifier key rotation policy, detailed audit/incident response, contract TTL monitoring/restoration, external-payment indexing, and provider-specific reconciliation for ambiguous network timeouts. MongoDB requires authentication, restricted network access and protected backups on hosted deployments.
 

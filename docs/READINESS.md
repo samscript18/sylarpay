@@ -1,6 +1,65 @@
 # Definition of Done review
 
-Checked against AGENTS.md section 94. This repository now contains the Testnet MVP, a deployed registry, and actual signed payment evidence. It is not a claim of production readiness or a live fiat payout integration.
+Checked against the current AGENTS.md hackathon-readiness and truthfulness requirements. This is a Testnet MVP with independently checkable settlement evidence, not production readiness or a live bank payout integration.
+
+## Current readiness audit — 2026-10-06
+
+This section is the authoritative current result. Dated sections below are historical checkpoints; their earlier test counts, balances and integration boundaries do not replace this audit.
+
+### Implementation and presentation
+
+- Preserved Soroban ownership/transfer authorization, current-owner re-resolution, Freighter signing, backend ledger verification, MongoDB indexing, private notes, QR profiles and SEP-10/SEP-24 abstraction.
+- Homepage prioritizes `@username → USDC → Stellar verification → anchor-powered cash-out`. Historical payment evidence and wallet-free simulation remain visibly separate; simulation does not sign, send or confirm a transaction.
+- Removed receive-screen NGN promises, invented fee/speed figures and the FAQ claim that an unregistered recipient could later claim already-sent funds. Cash-out renders only provider-advertised currencies, with an explicit unavailable message for NGN under the current USD configuration.
+- Verified badges visibly describe Stellar username ownership/profile checks, not government KYC. Notes remain off-chain; transaction amounts and wallet addresses remain public.
+- Payment links/QR use the configured origin with no undeployed custom-domain fallback. The canonical hosted origin is https://sylarpay.onrender.com.
+- Preserved the existing dark/mint visual language, quiet Testnet disclosure, skeleton loading and responsive cards. Added subtle proof-card hover motion, readable full-address wrapping and reduced-motion protection for decorative canvas animation.
+
+### Real Testnet proof rechecked
+
+The read-only integration audit resolved the existing verified `@sam` to `GBZQLPVMRLGH6XIZDEQQM244M3JWWTC57U2BCKQ2K6FTKNHIQXLAPU2R` and verified the successful 150 Circle Testnet USDC envelope again. Repeated indexing produced zero duplicate records. The observed balance was **313.5000000 USDC** at the recorded audit time; this is not a fixed demo balance. **No new payment was sent.** See [AUDIT-TESTNET.json](AUDIT-TESTNET.json).
+
+- [UsernameRegistry on Stellar Explorer](https://stellar.expert/explorer/testnet/contract/CCMWUH5LKJNXW4SGGDAKBVSTECBYQZK4G64ENCVBOULWPQGJRIZFAMFH).
+- [Actual 150 USDC transaction](https://stellar.expert/explorer/testnet/tx/19862afc3130ae51fc976a5ada12306371c6473b69d7edf0bcecdc7fbc787dbf).
+- Hosted public configuration/profile/anchor endpoints were checked: Testnet, the configured registry/Circle issuer, verified `@sam`, SDF Test Anchor, USD only, 1–10 USDC, simulated fiat. Local UI changes still require deployment before being attributed to the hosted build.
+
+### Final validation
+
+| Command | Result |
+| --- | --- |
+| `npm test` | PASS — 178 tests across 23 files |
+| `npm run lint` | PASS — zero errors and warnings |
+| `npm run typecheck` | PASS |
+| `npm run contract:test` | PASS — 7 tests |
+| `npm run contract:build` | PASS — release Wasm |
+| `NEXT_PUBLIC_DEMO_MODE=false npm run build` | PASS — Next.js Webpack production build |
+| `PLAYWRIGHT_BASE_URL=http://127.0.0.1:3001 npm run test:e2e -- --workers=1` | PASS — 20 checks, desktop and mobile |
+| `npx tsx scripts/audit-testnet.ts` | PASS — real registry/ledger evidence, no new payment |
+
+Browser checks used the final local production build. Public lookup/profile checks use actual Testnet data; authenticated account/receipt/withdrawal layout checks use explicit fixtures. They do not approve Freighter, sign payments, or prove hosted anchor completion. Screenshots were inspected, including the corrected USD-only SDF fixture. Initial parallel browser runs timed out under local load; the final single-worker run passed without weakening assertions. Production requires `NEXT_PUBLIC_DEMO_MODE=false` at both build and runtime; the production guard correctly refused a preview built with the local development flag enabled.
+
+### Security and final claim review
+
+Source/docs and final browser bundles were scanned for private-key literals and configured server-secret leakage. No exposed signing key or database credential was found. `.env.local` remains ignored and mode 0600; local wallet data remains ignored. No user signing was moved to the server. Tests/scripts remain excluded from commits by the existing repository policy, so fresh-clone verification needs the separately supplied local validation utilities; README explains that limitation.
+
+Final searches classified remaining NGN mentions as unsupported/provider-dependent architecture or explicitly labeled development fixtures. The remaining 1.8-second CSS value is a skeleton animation duration, not settlement performance. Old rate/ledger figures appear only in historical audit explanations or negative regression assertions. Custom-domain examples remain only in isolated URL test fixtures, not public application copy. No invented live payout, ledger number, public wallet address or transaction hash is presented.
+
+### Missing withdrawal funding evidence — 2026-10-06
+
+A user-reported funding attempt returned Horizon HTTP 404 after its reviewed transaction expired. A live read-only check of its existing anchor session still reported `AWAITING_USER_TRANSFER`, 1 USDC input and 0.9 simulated USD output. The quoted output is provider metadata, not a completed payout. The saved hash did not establish submission or settlement. The corrected read-only verification function returned `NOT_FOUND` for this exact attempt against actual Testnet data. No transfer was resubmitted or signing automated.
+
+The UI now describes this case as **Check your USDC transfer**, not withdrawal processing. A definitive Horizon 404 after expiry returns `NOT_FOUND` with explicit reconciliation guidance; an unexpired 404 or network/provider outage remains uncertain. Stellar submission rejection codes are surfaced safely. The existing exact hash stays reserved, preventing a second funding signature while the attempt is unresolved. Four new regressions cover expiry, transient missing evidence, outage uncertainty, rejection details and restored UI guidance.
+
+### Remaining presentation boundaries
+
+- `@sam` is an existing seeded identity; a fresh claim must use an available name.
+- Actual Freighter approvals, presentation-wallet selection and the hosted anchor form require manual rehearsal on the presentation machine.
+- Earlier user-approved SEP-10/SEP-24 evidence reached `incomplete`. The subsequent 2026-10-06 missing-funding investigation observed the live provider at `pending_user_transfer_start` (AWAITING_USER_TRANSFER), with transfer instructions and simulated USD output metadata. This does not establish successful withdrawal funding or provider-reported completion. Expired sessions still require the existing recovery procedure.
+- SDF Test Anchor demonstrates **USD with simulated fiat payout**. The existing 150 USDC payment is settlement evidence, not withdrawal funding evidence, and exceeds the anchor's 1–10 USDC limit.
+- **NGN production bank payout is not live.** Production requires a compatible anchor and validated local payout rail. No real fiat conversion, bank transfer or video of manual approvals is claimed.
+
+## Historical checkpoints
+
 
 ## SDF Test Anchor integration audit — 2026-10-04
 
@@ -173,7 +232,7 @@ Trustline status fix: `/api/me` reports the configured USDC code/issuer's actual
 - [x] Typecheck passes.
 - [x] Lint passes with zero errors; unused-import/variable warnings remain in concurrent UI edits.
 - [x] Production build passes (Webpack).
-- [x] README, architecture, demo, security docs and environment exampylarist.
+- [x] README, architecture, demo, security docs and environment example exist.
 
 ## External configuration and final rehearsal
 
@@ -183,13 +242,13 @@ Trustline status fix: `/api/me` reports the configured USDC code/issuer's actual
 4. The current reference-anchor rehearsal uses USD with simulated fiat payout, 1–10 USDC, `NEXT_PUBLIC_DEMO_MODE=false` and `ANCHOR_SIMULATED_FIAT=true`. Its real protocol/funding flow still requires manual approval; fiat payout is simulated. For offline DemoOffRamp, clear the anchor domain and enable demo mode only under `npm run dev`; it never reports payout completion.
 5. Testnet resets invalidate public evidence/accounts/contracts; redeploy and reseed after a reset.
 
-See SECURITY.md for the production controls and development-only dependency findings that remain outside this hackathon MVP.
+See docs/SECURITY.md for the production controls and development-only dependency findings that remain outside this hackathon MVP.
 
 ## Presentation limits explicitly retained
 
 - The ten-step Freighter extension rehearsal in DEMO.md is documented **but has not been performed by this agent**. Browser tests do not approve extensions or establish wallet compatibility on a phone.
 - `@sam` is an existing seeded identity, not a fresh claim during this audit. A fresh registration demonstration must use an available username consistently.
-- The canonical local payment links use the configured app origin. `skylarpay.app` in product examples does not establish a hosted deployment.
+- The canonical local payment links use the configured app origin. The hosted canonical origin is https://sylarpay.onrender.com; localhost remains the local development origin.
 - SDF Test Anchor is configured and live discovery/challenge validation passed. USD is the configured demo fiat; NGN is unavailable and no live Nigerian payout provider is configured. Full SEP-10/SEP-24/funding/provider completion remains a manual rehearsal; controlled protocol tests are not live withdrawal evidence.
 
 ## Payout currency mismatch fix — 2026-10-05

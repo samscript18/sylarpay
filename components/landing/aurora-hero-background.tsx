@@ -5,7 +5,8 @@ export function AuroraHeroBackground() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	useEffect(() => {
-		const canvas = canvasRef.current;
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const canvas = canvasRef.current;
 		if (!canvas) return;
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
@@ -128,7 +129,7 @@ export function AuroraHeroBackground() {
 				const dxMouse = mouse.x - p1.x;
 				const dyMouse = mouse.y - p1.y;
 				const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-				if (distMouse < 220) {
+				if (distMouse > 0 && distMouse < 220) {
 					p1.vx += (dxMouse / distMouse) * 0.05;
 					p1.vy += (dyMouse / distMouse) * 0.05;
 				}
@@ -192,7 +193,7 @@ export function AuroraHeroBackground() {
 	}, []);
 
 	return (
-		<div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+		<div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
 			{/* Dynamic Aurora & Particle Canvas */}
 			<canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-70" />
 

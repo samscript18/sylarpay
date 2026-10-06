@@ -12,7 +12,7 @@ export function SelectedRecipient({ recipient, onChange, disabled, label = "Sele
 				<div className="recipient-match-name">
 					<strong>@{recipient.username}</strong>
 					{recipient.verified ? (
-						<span className="recipient-verified" role="img" aria-label="Sylar Verified" title="Sylar Verified">
+						<span className="recipient-verified" role="img" aria-label="Sylar Verified" title="Stellar username ownership and profile verified. Not government KYC.">
 							<Check size={10} strokeWidth={3} aria-hidden="true" />
 						</span>
 					) : (
@@ -31,7 +31,7 @@ export function SelectedRecipient({ recipient, onChange, disabled, label = "Sele
 					</span>
 				</div>
 				<span className="selected-recipient-label">
-					<Check size={10} aria-hidden="true" /> Recipient selected
+					<Check size={10} aria-hidden="true" /> {recipient.verified ? "Owner/profile checked · not KYC" : "Recipient selected"}
 				</span>
 			</div>
 			<button type="button" className="selected-recipient-change" disabled={disabled} onClick={onChange} aria-label={`Change recipient @${recipient.username}`}>

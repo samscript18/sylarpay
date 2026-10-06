@@ -166,7 +166,7 @@ export function ClaimForm() {
 
 				<div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 text-xs text-zinc-400 leading-relaxed">
 					<strong className="text-zinc-300 block mb-0.5">✓ Sylar Verified</strong>
-					Wallet ownership and profile setup will be registered. This builds trust without exposing your private identity.
+					Stellar username ownership and profile setup are checked, not government KYC. Your display name and bio are public on your payment profile.
 				</div>
 
 				<button

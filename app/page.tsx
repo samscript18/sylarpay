@@ -43,7 +43,7 @@ export default function Home() {
             Your Stellar wallet, without the 56-character address.
           </p>
 
-          <p className="mb-8 text-sm text-emerald-200">@username → USDC → Local cash-out</p>
+          <p className="mb-8 text-sm text-emerald-200">@username → USDC → Stellar verification → anchor-powered cash-out</p>
           {/* Primary Action Buttons */}
           <div className="animate-[fadeInUp_0.8s_ease-out_0.3s_both] flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <Link

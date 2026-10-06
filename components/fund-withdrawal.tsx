@@ -17,9 +17,11 @@ export function FundWithdrawal({ id, fundingHash }: { id: string; fundingHash?: 
 	function describe(result: { status: string }) {
 		return result.status === "CONFIRMED"
 			? "USDC transfer confirmed on Stellar. The provider is still responsible for payout."
-			: result.status === "FAILED"
+			: result.status === "NOT_FOUND"
+                ? "This signed attempt has expired and was not found on Stellar. Submission is not confirmed. Reconcile this withdrawal with the partner before making another transfer."
+            : result.status === "FAILED"
 				? "USDC transfer failed on Stellar. No USDC was transferred."
-				: "Confirming on Stellar. No ledger confirmation yet; check again before making another transfer.";
+				: "No Stellar confirmation yet. A saved transaction hash does not prove submission. Check again before making another transfer.";
 	}
 	async function check() {
 		setBusy(true);
@@ -71,9 +73,10 @@ export function FundWithdrawal({ id, fundingHash }: { id: string; fundingHash?: 
 		<div className="notice">
 			{hash ? (
 				<>
-					<p className="account break-all">{hash}</p>
+					<p className="mb-2 text-xs text-zinc-400">Transfer attempt · settlement not established by this hash alone</p>
+                    <p className="account break-all">{hash}</p>
 					<a className="text-link" href={explorer(w.config!.network, hash)} target="_blank" rel="noreferrer">
-						View anchor transfer on Stellar ↗
+						Look up transfer on Stellar ↗
 					</a>
 					<button className="button secondary small" disabled={busy} onClick={check}>
 						Check Stellar confirmation

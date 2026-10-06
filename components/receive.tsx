@@ -1,6 +1,5 @@
 "use client";
 import { TestnetDisclosure } from "./testnet-disclosure";
-import Link from "next/link";
 import { ProfileSkeleton } from "./skeleton";
 import { useWallet, ConnectPrompt } from "./wallet-provider";
 import { useAccount } from "@/lib/use-account";

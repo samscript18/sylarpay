@@ -6,6 +6,8 @@
 
 A 56-character Stellar address works for the network, but it is a poor payment identity for an invoice, a bio or a WhatsApp message.
 
+[Repository](https://github.com/samscript18/sylarpay)
+
 ## The solution
 
 SylarPay turns a Stellar account into **@username**. Claim → Share → Get paid in USDC → Verify on Stellar → Request cash-out through a compatible anchor. Funds move between user wallets; SylarPay does not custody them.
@@ -65,19 +67,29 @@ Stellar provides publicly verifiable asset settlement, standard USDC transfers, 
 
 ## Local setup
 
-Requirements: Node.js 22.12+ (tested with Node 26), npm, Rust with `wasm32v1-none`, a running MongoDB instance (local or Atlas), and a Freighter wallet extension for interactive signing.
+Requirements: Node.js 22.x (22.12 or later), npm, a running MongoDB instance (local or Atlas), and Freighter for actual signing. Rust with `wasm32v1-none` is needed only to test/build the contract.
 
 ```bash
 npm ci
 cp .env.example .env.local
-rustup target add wasm32v1-none
-npm run contract:test
-npm run contract:build
-npm run contract:deploy
 npm run dev
 ```
 
-Open `http://localhost:3000`. Deployment funds a generated disposable Testnet verifier via Friendbot, uploads real Wasm, and atomically initializes the registry with its verifier address. It writes the public contract ID and the **server-only** verifier secret to ignored `.env.local`, mode 0600. It never prints that secret. The Stellar CLI is optional; deployment uses the official Stellar SDK. A fresh clone should deploy its own registry to retain control of verification.
+Before connecting a wallet, set `MONGODB_URI`, the canonical `NEXT_PUBLIC_APP_URL`, and the Testnet registry ID/network in `.env.local`. The public deployed ID is in [DEPLOYMENT.json](docs/DEPLOYMENT.json). Open `http://localhost:3000`. Keep `NEXT_PUBLIC_DEMO_MODE=false` for the configured SDF reference anchor. The public app and its sandbox require no wallet to view; sending and cash-out require manual Freighter approval.
+
+The shared registry's app-issued verification requires its authorized server-only verifier key. A clone does not contain that credential. To issue verification for your own deployment, initialize your own contract with a verifier you control; never copy or expose another operator's private key. Username ownership still requires the user's wallet authorization.
+
+**Snapshot limitation:** `/scripts` and new `/tests` are intentionally excluded from Git at the user's request. Contract source tests/build remain available, but deployment, seeding and live-audit npm commands need the local utilities listed below; do not expect those commands to work from a fresh clone. Use the existing hosted demo to inspect public evidence without deploying a contract.
+
+```bash
+rustup target add wasm32v1-none
+npm run contract:test
+npm run contract:build
+# Local operator utilities only, if present:
+# npm run contract:deploy
+```
+
+The local deployment utility generates a disposable Testnet verifier, funds it with Friendbot, uploads real Wasm, and atomically initializes the registry. It stores its secret only in ignored `.env.local`, mode 0600, and writes the public contract ID to configuration. No private keys ship with this repository.
 
 The app uses Webpack because Turbopack worker-port creation was blocked in the execution environment.
 

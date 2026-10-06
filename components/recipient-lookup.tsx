@@ -68,7 +68,7 @@ export function RecipientLookup({ value, network, onSelect }: { value: string; n
 							<span className="recipient-match-name">
 								<strong className="truncate">@{recipient.username}</strong>
 								{recipient.verified ? (
-									<span className="recipient-verified" role="img" aria-label="Sylar Verified" title="Sylar Verified">
+									<span className="recipient-verified" role="img" aria-label="Sylar Verified" title="Stellar username ownership and profile verified. Not government KYC.">
 										<Check size={10} strokeWidth={3} aria-hidden="true" />
 									</span>
 								) : (

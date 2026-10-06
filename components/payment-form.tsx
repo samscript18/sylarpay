@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Check, ArrowUp, ArrowDown, ArrowRight, ArrowUpRight, Clock, Lock, AtSign, KeyRound, Copy, Share2, QrCode, Sparkles } from "lucide-react";
+import { Check, ArrowUp, ArrowDown, ArrowRight, ArrowUpRight, Clock, Lock, AtSign, KeyRound, Copy, Share2, Sparkles } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { api } from "@/lib/api";
 import { amountSchema, displayAmount, usernameSchema } from "@/lib/validation";
@@ -16,7 +16,8 @@ import { LoadingStatus } from "./skeleton";
 export function Verification({ verified }: { verified: boolean }) {
 	return (
 		<span
-			className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
+			title={verified ? "Stellar username ownership and profile verified. Not government KYC." : "Not app-verified"}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
 				verified ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400" : "bg-white/5 border border-white/10 text-neutral-400"
 			}`}
 		>
@@ -175,20 +176,20 @@ function ConnectedPaymentForm({
 	}
 
 	const handleCopyReceiveLink = async () => {
-		if (!a.data?.identity) return;
-		const url = `${w.config?.appUrl || "https://sylarpay.app"}/@${a.data.identity.username}${requestAmount ? `?amount=${requestAmount}` : ""}`;
+		if (!a.data?.identity || !w.config?.appUrl) return;
+		const url = `${w.config!.appUrl.replace(/\/$/, "")}/@${a.data.identity.username}${requestAmount ? `?amount=${requestAmount}` : ""}`;
 		try {
 			await navigator.clipboard.writeText(url);
 			setCopiedLink(true);
 			setTimeout(() => setCopiedLink(false), 2500);
 		} catch {
-			/* Fallback */
+			setError("Could not copy the payment link. Copy it from the field below.");
 		}
 	};
 
 	const handleShareReceiveLink = async () => {
-		if (!a.data?.identity) return;
-		const url = `${w.config?.appUrl || "https://sylarpay.app"}/@${a.data.identity.username}${requestAmount ? `?amount=${requestAmount}` : ""}`;
+		if (!a.data?.identity || !w.config?.appUrl) return;
+		const url = `${w.config!.appUrl.replace(/\/$/, "")}/@${a.data.identity.username}${requestAmount ? `?amount=${requestAmount}` : ""}`;
 		if (navigator.share) {
 			try {
 				await navigator.share({
@@ -525,11 +526,11 @@ function ConnectedPaymentForm({
 									</div>
 									<div className="summary-row">
 										<span>Network Fee</span>
-										<strong className="text-emerald-400 font-mono">&lt; 0.0001 USDC (0.00001 XLM)</strong>
+										<strong className="text-emerald-400 font-mono">Shown in Freighter · paid in XLM</strong>
 									</div>
 									<div className="summary-row">
-										<span>Settlement</span>
-										<strong className="text-white font-mono">~ 1.8s (SCP Consensus)</strong>
+										<span>Confirmation</span>
+										<strong className="text-white font-mono">Confirmed after ledger verification</strong>
 									</div>
 
 									<div className="pt-2">
@@ -592,7 +593,7 @@ function ConnectedPaymentForm({
 							<span className="text-xs font-mono text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-500/20">Payment Link & QR</span>
 						</div>
 
-						{a.data?.identity ? (
+						{a.data?.identity && w.config?.appUrl ? (
 							<div className="space-y-5">
 								{/* Profile Badge */}
 								<div className="flex flex-col items-center">
@@ -627,7 +628,7 @@ function ConnectedPaymentForm({
 								{/* QR Code Container */}
 								<div className="inline-block p-4 rounded-2xl bg-white shadow-2xl">
 									<QRCodeSVG
-										value={`${w.config?.appUrl || "https://sylarpay.app"}/@${a.data.identity.username}${requestAmount ? `?amount=${requestAmount}` : ""}`}
+										value={`${w.config!.appUrl.replace(/\/$/, "")}/@${a.data.identity.username}${requestAmount ? `?amount=${requestAmount}` : ""}`}
 										size={180}
 										level="H"
 										marginSize={1}
@@ -636,7 +637,7 @@ function ConnectedPaymentForm({
 
 								{/* Payment Link Box */}
 								<div className="account text-xs select-all">
-									{w.config?.appUrl || "https://sylarpay.app"}/@
+									{w.config?.appUrl.replace(/\/$/, "")}/@
 									{a.data.identity.username}
 									{requestAmount ? `?amount=${requestAmount}` : ""}
 								</div>
@@ -675,7 +676,7 @@ function ConnectedPaymentForm({
 										className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-full border border-emerald-500/30 bg-emerald-950/30 text-emerald-300 font-medium text-xs transition-all hover:bg-emerald-900/40"
 									>
 										<Sparkles size={13} />
-										<span>Cash Out to NGN</span>
+										<span>Cash out · supported currencies</span>
 									</Link>
 								</div>
 							</div>

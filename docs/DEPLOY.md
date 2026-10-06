@@ -8,7 +8,7 @@ The installed Stellar SDK requires Node >=22.12.0. This project pins the Node 22
 
 Import `samscript18/sylarpay`, branch `main`, repository root. Choose Next.js, Node 22.x, install `npm ci --include=dev`, build `npm run build`, and leave the output directory at its framework default. Set these commands in the dashboard. API execution limits follow your hosting plan. No separate API host, CORS configuration or frontend API URL is required.
 
-Copy the public settings below into the Production environment. Enter secrets through the dashboard, not the repository. Set NEXT_PUBLIC_APP_URL to the final HTTPS deployment/custom-domain origin and redeploy after changing it. For Preview, use a separate database and the matching preview origin; avoid sharing a presentation account's private records across environments.
+Copy the public settings below into the Production environment. Enter secrets through the dashboard, not the repository. Set NEXT_PUBLIC_APP_URL to the final HTTPS deployment/custom-domain origin and redeploy after changing it. Set NEXT_PUBLIC_DEMO_MODE=false before the build as well as at runtime: Next.js inlines public environment variables into the build, so changing only the start command is insufficient. For Preview, use a separate database and the matching preview origin; avoid sharing a presentation account's private records across environments.
 
 ## Render
 

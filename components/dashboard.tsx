@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { DashboardSkeleton } from "./skeleton";
 import { useState } from "react";
-import { ArrowDownLeft, ArrowUpRight, RefreshCw, Wallet, ShieldCheck, Check, Plus, ExternalLink, Lock } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, RefreshCw, Check, Lock } from "lucide-react";
 import { useWallet, ConnectPrompt } from "./wallet-provider";
 import { useAccount } from "@/lib/use-account";
 import { displayAmount } from "@/lib/validation";

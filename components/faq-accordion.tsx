@@ -10,15 +10,15 @@ interface FAQItem {
 const defaultFAQs: FAQItem[] = [
 	{
 		question: "What are the fees on SylarPay?",
-		answer: "Stellar transactions settle with micro-fees typically under 0.00001 XLM (<$0.0001 USDC). SylarPay charges zero intermediary fees for direct username-to-username settlement.",
+		answer: "SylarPay currently charges no app processing fee for direct payments. Stellar network fees are paid in XLM and shown by your wallet before approval. Anchor fees, if applicable, are provided by the anchor.",
 	},
 	{
-		question: "How do private payments work?",
-		answer: "SylarPay keeps your private payment notes, customer invoices, and personal labels stored securely off-chain. The underlying Stellar USDC transaction remains publicly verifiable on the distributed ledger for proof of payment.",
+		question: "What stays private?",
+		answer: "Your account-private payment notes and invoice context stay off-chain. Transaction amounts, wallet addresses and settlement remain publicly verifiable on Stellar. SylarPay does not make Stellar payments private.",
 	},
 	{
 		question: "Can I send to someone before they have a Stellar account?",
-		answer: "Yes! You can share a payment link or QR code. The recipient can claim their @username and connect their Freighter wallet whenever they are ready to access their funds.",
+		answer: "The recipient needs a funded Stellar account, a registered username and a trustline for the configured USDC asset before receiving a username payment. Anyone can view their payment profile without connecting a wallet.",
 	},
 	{
 		question: "How does the Soroban UsernameRegistry protect my name?",
@@ -26,7 +26,7 @@ const defaultFAQs: FAQItem[] = [
 	},
 	{
 		question: "How do I cash out USDC to NGN or local fiat?",
-		answer: "You can use the 'Cash Out' tab to start a SEP-24 interactive off-ramp with a compatible Stellar anchor. The anchor handles the local fiat payout directly into your Nigerian bank account or supported payout rails.",
+		answer: "You can use the 'Cash Out' tab to start a SEP-24 interactive off-ramp with a compatible Stellar anchor. Supported currencies, fees and payout methods depend on the anchor. The current SDF Test Anchor demo uses USD with simulated fiat payout; NGN and production bank payout are not live.",
 	},
 ];
 

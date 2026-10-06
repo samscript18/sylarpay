@@ -49,11 +49,12 @@ export function PublicProfile({ username, amount }: { username: string; amount?:
 
 							<div className="mt-2 mb-4">
 								<Verification verified={recipient.verified} />
+                                {recipient.verified && <p className="mt-2 text-[11px] text-zinc-400">Stellar username ownership and profile verified. Not government KYC.</p>}
 							</div>
 
 							<p className="text-sm sm:text-base text-zinc-300 max-w-md mx-auto mb-6 leading-relaxed">
 								{recipient.profile?.displayName && <span className="font-semibold text-white block text-lg mb-1">{recipient.profile.displayName}</span>}
-								{recipient.profile?.bio || "Available for instant USDC payments on Stellar"}
+								{recipient.profile?.bio || "Available for USDC payments on Stellar"}
 							</p>
 
 							{!pay ? (

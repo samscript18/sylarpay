@@ -7,8 +7,8 @@ import { Header } from "@/components/header";
 import { Logo } from "@/components/logo";
 
 export const metadata: Metadata = {
-	title: "SylarPay — Your name. Your payment.",
-	description: "Get paid globally. Pay locally. Just use @username on Stellar.",
+	title: "SylarPay — Get paid with a Stellar @username",
+	description: "Receive USDC with a Stellar @username, link or QR. Verify Testnet payments on-chain. Cash-out depends on a compatible anchor; reference fiat payout is simulated.",
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

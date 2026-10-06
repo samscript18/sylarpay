@@ -48,7 +48,7 @@ Open Receive, copy the payment link, and show its QR. Open `/@sam` (or the usern
 
 Show Sylar Verified and explain briefly: ownership plus public profile setup, not government KYC. The profile can be viewed without a wallet.
 
-## 0:55–1:30 — Payment
+## Demo A — Real Testnet payment (0:55–1:30)
 
 Switch to the sender’s Freighter Testnet wallet/browser profile. Open the recipient’s payment link and connect. Enter `150` USDC. Continue and show the actual username, verification, amount, asset, network, and full destination.
 
@@ -56,11 +56,11 @@ Confirm payment and approve the wallet signature. Show submitted/confirming stat
 
 ## 1:30–1:50 — Proof
 
-Open the generated Stellar Explorer link for the actual transaction. Switch to the recipient’s Overview and refresh. Show the ledger balance and the incoming payment. Add an optional private note and explain it stays off-chain.
+Open the generated Stellar Explorer link for the actual transaction. Switch to the recipient’s Overview. Activity and balance refresh automatically after relevant mutations, on focus and during background checks. Show the ledger balance and incoming payment; use a manual refresh only if checking an external update. Add an optional private note and explain it stays off-chain.
 
 If liquidity or the network fails, show the honest error or pending state. Never describe pending as completed.
 
-## 1:50–2:30 — Cash out
+## Demo B — Anchor architecture and simulated fiat (1:50–2:30)
 
 Open Cash Out.
 
@@ -95,19 +95,19 @@ This rehearsal is **not recorded as completed by automated tests**. Use two sepa
 9. **Confirm history.** In the recipient browser profile, open Overview and refresh activity. Check the incoming 150 USDC entry and the actual ledger balance increase. Existing seeded balance may already be 300 USDC or more; do not expect a fixed total. Confirm repeated verification creates one record. An optional note remains off-chain and account-private.
 10. **Open Stellar Explorer.** Follow the app-generated link. Confirm Testnet, successful payment, sender, destination, 150 USDC, and configured Circle issuer. This is the judge’s settlement proof.
 
-Finally perform the SDF Test Anchor rehearsal below. It remains outstanding beyond live discovery and server challenge validation. The offline DemoOffRamp is a separate development-only option and does not transfer USDC.
+Finally perform the SDF Test Anchor rehearsal below. Earlier user-approved authentication/initiation reached an incomplete session; hosted completion, funding and payout reconciliation remain outstanding. The offline DemoOffRamp is a separate development-only option and does not transfer USDC.
 
 ### Run-of-show checks
 
 - Use `npx tsx scripts/audit-testnet.ts` for a read-only recheck of the deployed registry, seeded identity, existing payment, duplicate indexing, and current balance. It writes `AUDIT-TESTNET.json` and sends no payment. `npm run test:live` sends another actual Testnet payment and should be run deliberately.
 - `@sam` is an **existing seeded identity**. Say “Sam claimed this earlier.” For an actual fresh claim, pick an available variant, complete its on-chain registration, and use that same variant in all links and narration.
-- Set `NEXT_PUBLIC_APP_URL` to the actual presentation origin before starting. The local setup currently uses localhost; `sylarpay.app` is product example copy, not evidence that this repository is hosted there.
+- Set `NEXT_PUBLIC_APP_URL` to the actual presentation origin before starting. Local development uses localhost; the hosted deployment uses https://sylarpay.onrender.com.
 - Run the mobile viewport checks and also rehearse on the actual presentation phone. Check `/@sam`, Pay, QR, Send review, pending/confirmed states, Overview, and Cash Out. Freighter extension approval is rehearsed in the desktop browser; viewport tests do not establish phone wallet compatibility.
 - Testnet reset or expired contract storage: redeploy/reseed and update configuration, then rerun the read-only audit. Do not present historical evidence as current availability.
 
 ## SDF Test Anchor manual withdrawal rehearsal
 
-**Verified live during this integration:** published Testnet network, SEP-10/24/38 endpoints, exact Circle USDC issuer, USD availability, 1–10 USDC limits, and SDK validation of a real server-signed SEP-10 challenge without `client_domain`. **Not yet verified live:** user authentication, interactive session, funding instructions, USDC transfer, or provider completion. See `SDF-ANCHOR-AUDIT.json`. No wallet approval was automated.
+**Verified live during this integration:** published Testnet network, SEP-10/24/38 endpoints, exact Circle USDC issuer, USD availability, 1–10 USDC limits, and SDK validation of a real server-signed SEP-10 challenge without `client_domain`. **Subsequently observed:** an earlier user-approved SEP-10/SEP-24 session reached `incomplete`; access later expired. **Subsequent 2026-10-06 observation:** a user-initiated session reached `pending_user_transfer_start`, with 1 USDC funding instructions and 0.9 simulated USD output metadata. Its saved transfer hash was not found on Stellar after expiry. **Still unverified:** successful withdrawal USDC settlement and provider completion. The initial challenge audit is in `SDF-ANCHOR-AUDIT.json`; later session observations are recorded in READINESS.md. No wallet approval was automated.
 
 Use a disposable Testnet wallet you control, with at least **2 Circle Testnet USDC**, an authorized trustline, and XLM for fees/reserve. Never display/import secrets on the projector. Restart the app after changing `.env.local`; the reference configuration uses `NEXT_PUBLIC_DEMO_MODE=false` and `ANCHOR_SIMULATED_FIAT=true`.
 
@@ -116,8 +116,8 @@ Use a disposable Testnet wallet you control, with at least **2 Circle Testnet US
 3. **Open Cash Out.** Confirm **SDF Test Anchor — simulated fiat payout**. This uses the real provider API; it is different from the offline Demo Off-Ramp.
 4. **Select USD.** The reference anchor advertises USD and CAD; this demo is configured for USD. NGN is unavailable, even with simulated fiat enabled. Do not narrate this as a real bank payout.
 5. **Enter 2 USDC.** The provider allows 1–10 USDC. Check 0.5 and 11 are rejected before requesting a wallet signature. Do not use 150.
-6. **Start the withdrawal.** Manually approve the SEP-10 authentication challenge in Freighter. It authenticates with `testanchor.stellar.org`; this signature does not transfer USDC. This is the first unperformed integration boundary.
-7. **Complete the hosted reference UI.** Follow **Continue verification**. The expected hosted origin is `https://anchor-ref-ui-testanchor.stellar.org`; inspect the actual returned URL before continuing. Complete the reference form and any required confirmation manually. SkylarPayylar not recreate this form. Do not narrate it as production KYC or a bank payout.
+6. **Start the withdrawal.** Manually approve the SEP-10 authentication challenge in Freighter. It authenticates with `testanchor.stellar.org`; this signature does not transfer USDC. A prior user-approved session is recorded, but this rehearsal still requires manual approval.
+7. **Complete the hosted reference UI.** Follow **Continue verification**. The expected hosted origin is `https://anchor-ref-ui-testanchor.stellar.org`; inspect the actual returned URL before continuing. Complete the reference form and any required confirmation manually. SylarPay does not recreate this form. Do not narrate it as production KYC or a bank payout.
 8. **Return to SylarPay.** Wait for polling or use **Check withdrawal status**. `incomplete` means provider information is still needed. Only `pending_user_transfer_start` enables preparation of the funding transfer.
 9. **Review funding instructions.** Choose **Prepare USDC transfer**. Inspect the exact provider destination, amount, Circle issuer, Stellar Testnet network, and required memo/payment identifier. Stop if any field is unexpected. Amount comes from the provider; no exchange rate is invented.
 10. **Approve the USDC transfer in Freighter.** Choose **Confirm USDC transfer**, manually inspect the transaction, and approve once. This is a real transfer of valueless Testnet USDC; it is not a fiat payout.
@@ -132,7 +132,8 @@ Use a disposable Testnet wallet you control, with at least **2 Circle Testnet US
 - **Hosted tab closed:** closing the tab does not cancel the provider transaction. Return to its existing interactive link and check status; do not initiate another withdrawal. If the provider reports error, expiry or refund, SylarPay shows the corresponding terminal state.
 - **Funding response lost/reload:** the exact signed hash is saved before submission and restored from account/network-scoped session storage or the server record. Use **Check Stellar confirmation** and the explorer for that hash; do not sign another transfer. An unrecorded attempt requires reconciliation rather than assuming success or failure.
 - **Initiation response lost:** retry the same amount/currency request in the same browser; the saved idempotency key restores the reserved request. An unconfirmed reservation remains `CREATED`, not completed or a fabricated session. If no anchor session ID was returned, reconcile with the provider before starting a new request or transferring funds.
-- **Authentication expired/provider unavailable:** retain the existing withdrawal ID and hash, refresh status when available, and complete reauthentication with the provider before continuing. This MVP does not silently renew an expired SEP-10 token for an existing session; do not initiate a duplicate withdrawal to work around expiry.
+- **Authentication expired/provider unavailable:** retain the existing withdrawal ID and hash, refresh status when available, and complete reauthentication with the provider before continuing. Use Reconnect to partner to approve a new SEP-10 challenge for the same withdrawal. It restores provider access, not an expired interactive token; do not initiate a duplicate withdrawal to work around expiry.
+- **Expired attempt / explorer not found:** a saved hash is not evidence of submission. Use Check Stellar confirmation. If the signed transaction expired and Horizon returns 404, reconcile the existing withdrawal and attempt with the partner before preparing another transfer. Never edit or clear the stored hash to bypass duplicate protection.
 - **Stellar failure:** show the actual failed transaction. No USDC payout claim is made. Fees may still be charged in XLM; inspect the ledger before any deliberate retry.
 - **No completion:** leave the real status visible. The judge can see protocol and Stellar evidence without a fabricated final state. The hosted form and reference payout progression require manual verification.
 
@@ -152,7 +153,7 @@ If a saved withdrawal reports a different payout currency from the requested one
 
 ### Wallet-free first impression
 
-Open the landing page and point out the persistent Testnet disclosure. Use the sandbox's **Resolve** button for an actual public username lookup; no wallet is needed. **Preview payment** is illustrative and sends no funds. For settlement proof, use the direct **View UsernameRegistry** and **View verified 150 USDC transaction** links: these are existing Testnet evidence, not transactions created by the preview. Open the payment profile and connect Freighter only when continuing to a real payment. Cash-out initiation also requires Freighter authentication/approval and the anchor's hosted interaction; it cannot be completed by a visitor without a Stellar wallet. The configured reference demo uses USD and simulates fiat payout; no NGN rail or bank transfer is live.
+Open the landing page and point out the persistent Testnet disclosure. Use the sandbox's **Resolve** button for an actual public username lookup; no wallet is needed. **Simulate payment** is illustrative and sends no funds. For settlement proof, use the direct **View UsernameRegistry** and **View verified 150 USDC transaction** links: these are existing Testnet evidence, not transactions created by the preview. Open the payment profile and connect Freighter only when continuing to a real payment. Cash-out initiation also requires Freighter authentication/approval and the anchor's hosted interaction; it cannot be completed by a visitor without a Stellar wallet. The configured reference demo uses USD and simulates fiat payout; no NGN rail or bank transfer is live.
 
 ### Homepage-first judge walkthrough — 2026-10-06
 

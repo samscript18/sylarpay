@@ -8,13 +8,13 @@ export function TestnetProof() {
       <h2 className="mt-3 text-3xl font-medium">Proof you can open.</h2>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-400">Existing seeded @sam identity and the earlier verified 150 USDC payment. Recorded on {evidence.checkedAt.slice(0, 10)}; not a new payment, a current balance, or a fiat payout. Testnet resets can invalidate this evidence.</p>
       <div className="mt-6 grid gap-5 md:grid-cols-2">
-        <article className="min-w-0 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+        <article className="min-w-0 transition duration-300 hover:-translate-y-1 motion-reduce:transform-none rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <h3 className="text-lg font-medium">@sam · Soroban identity</h3>
           <p className="mt-2 text-xs text-emerald-300">Sylar Verified in the recorded demo · not government KYC</p>
           <dl className="mt-5 space-y-4 text-xs"><div><dt className="text-neutral-400">Recorded owner</dt><dd className="mt-1 break-all text-neutral-200">{evidence.recipient}</dd></div><div><dt className="text-neutral-400">Contract · Stellar Testnet</dt><dd className="mt-1 break-all text-neutral-200">{evidence.contractId}</dd></div></dl>
           <a href={`https://stellar.expert/explorer/testnet/contract/${evidence.contractId}`} target="_blank" rel="noopener noreferrer" className="mt-6 inline-block text-sm text-emerald-300">View UsernameRegistry ↗</a>
         </article>
-        <article className="min-w-0 rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-6">
+        <article className="min-w-0 transition duration-300 hover:-translate-y-1 motion-reduce:transform-none rounded-3xl border border-emerald-400/20 bg-emerald-400/5 p-6">
           <h3 className="text-lg font-medium">150 USDC · Confirmed on Stellar</h3>
           <p className="mt-2 text-xs text-emerald-300">Real Testnet settlement · no monetary value</p>
           <p className="mt-5 text-sm leading-relaxed text-neutral-400">Verification checked the network, sender, current recipient, exact amount and USDC issuer against the successful ledger transaction.</p>

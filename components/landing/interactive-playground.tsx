@@ -50,11 +50,12 @@ export function InteractivePlayground() {
 				{/* Interactive Controls */}
 				<div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-4 max-w-3xl mx-auto mb-8">
 					<div className="md:col-span-6 relative">
-						<label className="block text-[11px] uppercase font-sans tracking-wider text-neutral-400 mb-1.5 text-left">Test Username</label>
+						<label htmlFor="sandbox-username" className="block text-[11px] uppercase font-sans tracking-wider text-neutral-400 mb-1.5 text-left">Test Username</label>
 						<div className="relative flex items-center">
 							<span className="absolute left-3.5 text-neutral-500 font-sans text-sm">@</span>
 							<input
-								type="text"
+								id="sandbox-username"
+                                type="text"
 								value={testUser}
                                 disabled={isResolving}
 								onChange={(e) => { setTestUser(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "")); setResolved(null); setExecuted(false); setError(""); }}
@@ -73,11 +74,12 @@ export function InteractivePlayground() {
 					</div>
 
 					<div className="md:col-span-6 relative">
-						<label className="block text-[11px] uppercase font-sans tracking-wider text-neutral-400 mb-1.5 text-left">USDC Amount</label>
+						<label htmlFor="sandbox-amount" className="block text-[11px] uppercase font-sans tracking-wider text-neutral-400 mb-1.5 text-left">USDC Amount</label>
 						<div className="relative flex items-center">
 							<span className="absolute left-3.5 text-neutral-500 font-sans text-sm">$</span>
 							<input
-								type="text"
+								id="sandbox-amount"
+                                type="text"
 								value={testAmount}
 								onChange={(e) => setTestAmount(e.target.value)}
 								placeholder="100.00"
@@ -89,10 +91,11 @@ export function InteractivePlayground() {
 				</div>
 
 				{error && <p role="alert" className="relative z-10 mb-4 text-sm text-amber-200">{error}</p>}
-				{/* Resolution Result Card */}
+				{resolved?.verified && <p className="relative z-10 mb-3 text-xs text-neutral-400">Sylar Verified checks username ownership and profile setup, not government KYC.</p>}
+                {/* Resolution Result Card */}
 				<div className="relative z-10 max-w-3xl mx-auto rounded-2xl border border-white/10 bg-black/50 p-5 md:p-6 text-left">
 					<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-4 mb-4">
-						<div>
+						<div className="min-w-0">
 							<div className="text-sm font-semibold text-white flex items-center gap-2">
 								<span>@{testUser || "username"}</span>
 								{resolved?.verified && (
@@ -101,7 +104,7 @@ export function InteractivePlayground() {
 									</span>
 								)}
 							</div>
-							<div className="text-[11px] font-sans text-neutral-400 mt-1 truncate">
+							<div className="text-[11px] font-sans text-neutral-400 mt-1 break-all">
 								Stellar account: <span className="text-white">{resolved?.address || "Choose Resolve to look up this username"}</span>
 							</div>
 						</div>

@@ -159,8 +159,13 @@ export async function submitFunding(
         const previous = await s.transactions().transaction(hash).call();
         if (!previous.successful) throw new AppError("Anchor transfer failed.");
       } catch {
+        const response = (e as Error & { response?: { data?: { extras?: { result_codes?: { transaction?: string; operations?: string[] } } } } }).response;
+        const codes = response?.data?.extras?.result_codes;
+        const reason = [codes?.transaction, ...(codes?.operations || [])]
+          .filter((code): code is string => typeof code === "string" && /^(tx|op)_[a-z_]+$/.test(code))
+          .join(", ");
         throw new AppError(
-          "Transfer was rejected or is not confirmed. Check the transaction before retrying.",
+          `Stellar rejected this transfer${reason ? ` (${reason})` : ""}. No successful ledger confirmation was found. Keep this attempt and reconcile it before making another transfer.`,
           409,
         );
       }
@@ -178,7 +183,14 @@ export async function verifyFunding(account: string, id: string) {
   try {
     const s = await horizon();
     evidence = await s.transactions().transaction(hash).call();
-  } catch {
+  } catch (error) {
+    const status = (error as { response?: { status?: number } } | null)?.response?.status;
+    const original = TransactionBuilder.fromXDR(row.fundingXdr, c.passphrase);
+    const maxTime = original instanceof Transaction ? original.timeBounds?.maxTime : undefined;
+    // A saved signed hash proves an attempt, not submission. Only a definitive
+    // Horizon 404 after expiry is classified as missing; outages stay uncertain.
+    if (status === 404 && maxTime && maxTime !== "0" && BigInt(maxTime) < BigInt(Math.floor(Date.now() / 1000)))
+      return { txHash: hash, status: "NOT_FOUND" };
     return { txHash: hash, status: "PENDING" };
   }
   if (!evidence.successful) return { txHash: hash, status: "FAILED" };

@@ -88,12 +88,12 @@ export function WithdrawalNextStep({
         : `Opens ${session.provider} in a new tab. Return here when you’re done.`;
     }
   } else if (
-    session.status === "AWAITING_USER_TRANSFER" &&
-    !session.fundingHash
+    session.status === "AWAITING_USER_TRANSFER"
   ) {
-    title = "Review your USDC transfer";
-    description =
-      "Check the partner’s destination, amount and memo. You’ll approve the transfer in Freighter.";
+    title = session.fundingHash ? "Check your USDC transfer" : "Review your USDC transfer";
+    description = session.fundingHash
+      ? "The partner is still waiting for USDC. A saved transfer attempt is not proof of payment. Check Stellar confirmation before sending again."
+      : "Check the partner’s destination, amount and memo. You’ll approve the transfer in Freighter.";
   } else if (session.status === "CREATED" && !session.anchorId) {
     Icon = CircleAlert;
     title = "We’re checking your request";
