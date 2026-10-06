@@ -22,12 +22,7 @@ SylarPay turns a Stellar account into **@username**. Claim → Share → Get pai
 
 See @sam, QR payment links, the recorded 150 USDC settlement, Explorer proof and anchor-powered cash-out. Fiat payout is simulated; no NGN bank payout is live.
 
-*Demo video upload pending.*
-
-<!-- In GitHub's README editor, replace the line above by dragging in
-the exported sylarpay-hackathon-demo.mp4. Wait for the upload to finish and leave
-the generated GitHub attachment URL on its own line so the video player renders.
-Preview the README before committing. Do not commit the generated MP4 to Git. -->
+https://github.com/user-attachments/assets/c0fcb6c0-9411-4360-911b-7ccb25225ac4
 
 [Demo script](docs/DEMO.md)
 
